@@ -21,6 +21,7 @@ import { registerImageGenTool } from './tools/image-gen.js'
 // Import Gemini client and logger
 import { initGeminiClient } from './gemini-client.js'
 import { setupLogger, logger, LogLevel } from './utils/logger.js'
+import { getProxyInfo } from './utils/proxy.js'
 
 // Parse command line arguments
 const { values } = parseArgs({
@@ -63,6 +64,11 @@ Environment Variables:
   GEMINI_MODEL     (optional) Default Gemini model to use
   GEMINI_PRO_MODEL (optional) Specify Pro model variant
   GEMINI_FLASH_MODEL (optional) Specify Flash model variant
+  
+Proxy Configuration:
+  http_proxy       (optional) HTTP proxy URL (e.g., http://proxy.example.com:8080)
+  https_proxy      (optional) HTTPS proxy URL (e.g., http://proxy.example.com:8080)
+  no_proxy         (optional) Comma-separated list of hosts to bypass proxy
   `)
   process.exit(0)
 }
@@ -84,7 +90,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 // Get model name from environment or use default
 // Use a safeguard to ensure we always have a valid model name
-const defaultModel = 'gemini-2.5-pro-preview-03-25'
+const defaultModel = 'gemini-1.5-pro'
 const geminiModel = process.env.GEMINI_MODEL || defaultModel
 
 // Log model configuration for debugging
@@ -96,6 +102,12 @@ logger.debug(`Model configuration:
 async function main() {
   logger.info(`Starting MCP Gemini Server with model: ${geminiModel}`)
   logger.info(`Logging mode: ${logLevel}`)
+  
+  // Log proxy configuration if present
+  const proxyInfo = getProxyInfo()
+  if (proxyInfo) {
+    logger.info(`Proxy settings: ${proxyInfo}`)
+  }
 
   // Handle unexpected stdio errors
   process.stdin.on('error', (err) => {

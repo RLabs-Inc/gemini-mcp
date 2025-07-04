@@ -6,6 +6,7 @@
 
 import { GoogleGenAI } from '@google/genai'
 import { logger } from './utils/logger.js'
+import { configureProxy, getProxyInfo } from './utils/proxy.js'
 
 // Global clients
 let genAI: GoogleGenAI
@@ -23,14 +24,23 @@ export async function initGeminiClient(): Promise<void> {
   }
 
   try {
+    // Configure proxy if needed
+    await configureProxy()
+    
+    // Log proxy configuration if present
+    const proxyInfo = getProxyInfo()
+    if (proxyInfo) {
+      logger.info(`Proxy configuration: ${proxyInfo}`)
+    }
+    
     // Initialize the API client
     genAI = new GoogleGenAI({ apiKey })
 
     // Set up models
     proModelName =
-      process.env.GEMINI_PRO_MODEL || 'gemini-2.5-pro-exp-03-25'
+      process.env.GEMINI_PRO_MODEL || 'gemini-1.5-pro'
     flashModelName =
-      process.env.GEMINI_FLASH_MODEL || 'gemini-2.0-flash-001'
+      process.env.GEMINI_FLASH_MODEL || 'gemini-1.5-flash'
 
     // Test connection with timeout and retry
     let connected = false

@@ -283,9 +283,26 @@ Options:
 ## Environment Variables
 
 - `GEMINI_API_KEY` (required): Your Google Gemini API key
-- `GEMINI_MODEL` (optional): Default Gemini model (default: "gemini-2.5-pro-latest")
-- `GEMINI_PRO_MODEL` (optional): Specify Pro model variant (default: "gemini-2.5-pro")
-- `GEMINI_FLASH_MODEL` (optional): Specify Flash model variant (default: "gemini-2.5-flash")
+- `GEMINI_MODEL` (optional): Default Gemini model (default: "gemini-1.5-pro")
+- `GEMINI_PRO_MODEL` (optional): Specify Pro model variant (default: "gemini-1.5-pro")
+- `GEMINI_FLASH_MODEL` (optional): Specify Flash model variant (default: "gemini-1.5-flash")
+- `VERBOSE` (optional): Set to "true" to enable verbose logging
+- `QUIET` (optional): Set to "true" to enable quiet mode
+
+### Proxy Configuration
+
+The MCP server respects standard proxy environment variables:
+
+- `http_proxy` or `HTTP_PROXY`: HTTP proxy URL (e.g., `http://proxy.example.com:8080`)
+- `https_proxy` or `HTTPS_PROXY`: HTTPS proxy URL (e.g., `http://proxy.example.com:8080`)
+- `no_proxy` or `NO_PROXY`: Comma-separated list of hosts to bypass proxy (e.g., `localhost,127.0.0.1,.internal.domain`)
+
+Example with proxy:
+```bash
+export https_proxy=http://corporate-proxy.example.com:8080
+export no_proxy=localhost,127.0.0.1
+claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY https_proxy=$https_proxy no_proxy=$no_proxy npx -y @rlabs/gemini-mcp
+```
 
 ## Recommended Project Setup
 

@@ -26,9 +26,12 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
 - `GEMINI_API_KEY` (required): Google Gemini API key
 - `VERBOSE=true`: Enable verbose logging
 - `QUIET=true`: Enable quiet logging
-- `GEMINI_MODEL`: Default Gemini model (default: "gemini-2.5-pro-latest")
-- `GEMINI_PRO_MODEL`: Pro model variant (default: "gemini-2.5-pro")
-- `GEMINI_FLASH_MODEL`: Flash model variant (default: "gemini-2.5-flash")
+- `GEMINI_MODEL`: Default Gemini model (default: "gemini-1.5-pro")
+- `GEMINI_PRO_MODEL`: Pro model variant (default: "gemini-1.5-pro")
+- `GEMINI_FLASH_MODEL`: Flash model variant (default: "gemini-1.5-flash")
+- `http_proxy` or `HTTP_PROXY`: HTTP proxy URL (e.g., `http://proxy.example.com:8080`)
+- `https_proxy` or `HTTPS_PROXY`: HTTPS proxy URL (e.g., `http://proxy.example.com:8080`)
+- `no_proxy` or `NO_PROXY`: Comma-separated list of hosts to bypass proxy
 
 ## Command Line Options
 
@@ -51,6 +54,9 @@ claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY VERBOSE=
 
 # Quiet mode
 claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY QUIET=true npx -y @rlabs/gemini-mcp
+
+# With proxy support
+claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY https_proxy=http://proxy.example.com:8080 npx -y @rlabs/gemini-mcp
 ```
 
 ### Manual Installation
