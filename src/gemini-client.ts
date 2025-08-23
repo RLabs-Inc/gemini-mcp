@@ -28,9 +28,9 @@ export async function initGeminiClient(): Promise<void> {
 
     // Set up models
     proModelName =
-      process.env.GEMINI_PRO_MODEL || 'gemini-2.5-pro-exp-03-25'
+      process.env.GEMINI_PRO_MODEL || 'gemini-2.5-pro'
     flashModelName =
-      process.env.GEMINI_FLASH_MODEL || 'gemini-2.0-flash-001'
+      process.env.GEMINI_FLASH_MODEL || 'gemini-2.5-flash'
 
     // Test connection with timeout and retry
     let connected = false

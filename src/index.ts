@@ -84,7 +84,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 // Get model name from environment or use default
 // Use a safeguard to ensure we always have a valid model name
-const defaultModel = 'gemini-2.5-pro-preview-03-25'
+const defaultModel = 'gemini-2.5-pro'
 const geminiModel = process.env.GEMINI_MODEL || defaultModel
 
 // Log model configuration for debugging
