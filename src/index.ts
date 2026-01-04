@@ -17,6 +17,16 @@ import { registerBrainstormTool } from './tools/brainstorm.js'
 import { registerAnalyzeTool } from './tools/analyze.js'
 import { registerSummarizeTool } from './tools/summarize.js'
 import { registerImageGenTool } from './tools/image-gen.js'
+import { registerImageEditTool } from './tools/image-edit.js'
+import { registerVideoGenTool } from './tools/video-gen.js'
+import { registerCodeExecTool } from './tools/code-exec.js'
+import { registerSearchTool } from './tools/search.js'
+import { registerStructuredTool } from './tools/structured.js'
+import { registerYouTubeTool } from './tools/youtube.js'
+import { registerDocumentTool } from './tools/document.js'
+import { registerUrlContextTool } from './tools/url-context.js'
+import { registerCacheTool } from './tools/cache.js'
+import { registerSpeechTool } from './tools/speech.js'
 
 // Import Gemini client and logger
 import { initGeminiClient } from './gemini-client.js'
@@ -83,8 +93,8 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 // Get model name from environment or use default
-// Use a safeguard to ensure we always have a valid model name
-const defaultModel = 'gemini-2.5-pro'
+// Use Gemini 3 as default (latest frontier model)
+const defaultModel = 'gemini-3-pro-preview'
 const geminiModel = process.env.GEMINI_MODEL || defaultModel
 
 // Log model configuration for debugging
@@ -115,7 +125,7 @@ async function main() {
     // Create MCP server
     const server = new McpServer({
       name: 'Gemini',
-      version: '0.1.0',
+      version: '0.5.0',
     })
 
     // Register tools
@@ -124,6 +134,16 @@ async function main() {
     registerAnalyzeTool(server)
     registerSummarizeTool(server)
     registerImageGenTool(server)
+    registerImageEditTool(server)
+    registerVideoGenTool(server)
+    registerCodeExecTool(server)
+    registerSearchTool(server)
+    registerStructuredTool(server)
+    registerYouTubeTool(server)
+    registerDocumentTool(server)
+    registerUrlContextTool(server)
+    registerCacheTool(server)
+    registerSpeechTool(server)
 
     // Start server with stdio transport with enhanced error handling
     const transport = new StdioServerTransport()

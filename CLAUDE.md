@@ -4,31 +4,82 @@ This document provides essential information for Claude when working with this G
 
 ## Project Overview
 
-This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
+This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
+
+**Version:** 0.4.0
+**Package:** @rlabs-inc/gemini-mcp
 
 ## Key Components
 
 - `src/index.ts`: Main entry point for the MCP server
-- `src/gemini-client.ts`: Client for Google's Generative AI API
+- `src/gemini-client.ts`: Client for Google's Generative AI API (includes thinking levels, image/video generation)
 - `src/utils/logger.ts`: Logging utilities with configurable verbosity
 - `src/tools/*.ts`: Various tool implementations for integration with Claude Code
 
 ## Tools Implemented
 
-1. **Query** (`query.ts`): Direct queries to Gemini models
+1. **Query** (`query.ts`): Direct queries to Gemini with thinking level control
+   - `thinkingLevel`: minimal, low, medium, high
+
 2. **Brainstorm** (`brainstorm.ts`): Collaborative brainstorming between Claude and Gemini
+
 3. **Analyze** (`analyze.ts`): Code and text analysis using Gemini
+
 4. **Summarize** (`summarize.ts`): Content summarization at different detail levels
-5. **Image Gen** (`image-gen.ts`): Image prompt generation for use with image generation tools
+
+5. **Image Gen** (`image-gen.ts`):
+   - `gemini-generate-image`: Generate images with Nano Banana Pro
+     - Up to 4K resolution (1K, 2K, 4K)
+     - 10 aspect ratios (1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9)
+     - Google Search grounding for real-world accuracy
+     - Returns base64 that Claude can SEE!
+   - `gemini-image-prompt`: Generate prompts for other image tools (legacy)
+
+6. **Image Edit** (`image-edit.ts`): Multi-turn conversational image editing
+   - `gemini-start-image-edit`: Start an editing session
+   - `gemini-continue-image-edit`: Continue refining with follow-up prompts
+   - `gemini-end-image-edit`: Close a session
+   - `gemini-list-image-sessions`: List active sessions
+
+7. **Video Gen** (`video-gen.ts`):
+   - `gemini-generate-video`: Start async video generation with Veo
+   - `gemini-check-video`: Check video generation status and download
+
+8. **Code Execution** (`code-exec.ts`):
+   - `gemini-run-code`: Write and execute Python code
+   - Supports: numpy, pandas, matplotlib, scipy, scikit-learn, tensorflow
+   - Returns charts as images Claude can see
+
+9. **Google Search** (`search.ts`):
+   - `gemini-search`: Real-time web search with inline citations
+   - Returns grounded responses with source URLs
+
+10. **Structured Output** (`structured.ts`):
+    - `gemini-structured`: JSON responses with schema validation
+    - `gemini-extract`: Convenience tool for entities, facts, sentiment, keywords
+
+11. **YouTube Analysis** (`youtube.ts`):
+    - `gemini-youtube`: Analyze YouTube videos by URL with clipping
+    - `gemini-youtube-summary`: Quick video summarization
+
+12. **Document Analysis** (`document.ts`):
+    - `gemini-analyze-document`: Analyze PDFs, DOCX, spreadsheets
+    - `gemini-summarize-pdf`: Quick PDF summarization
+    - `gemini-extract-tables`: Extract tables from documents
 
 ## Environment Variables
 
-- `GEMINI_API_KEY` (required): Google Gemini API key
-- `VERBOSE=true`: Enable verbose logging
-- `QUIET=true`: Enable quiet logging
-- `GEMINI_MODEL`: Default Gemini model (default: "gemini-2.5-pro-latest")
-- `GEMINI_PRO_MODEL`: Pro model variant (default: "gemini-2.5-pro")
-- `GEMINI_FLASH_MODEL`: Flash model variant (default: "gemini-2.5-flash")
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `GEMINI_API_KEY` | Yes | - | Google Gemini API key |
+| `GEMINI_MODEL` | No | - | Override model for init test |
+| `GEMINI_PRO_MODEL` | No | `gemini-3-pro-preview` | Pro model (Gemini 3) |
+| `GEMINI_FLASH_MODEL` | No | `gemini-3-flash-preview` | Flash model (Gemini 3) |
+| `GEMINI_IMAGE_MODEL` | No | `gemini-3-pro-image-preview` | Image model (Nano Banana Pro) |
+| `GEMINI_VIDEO_MODEL` | No | `veo-2.0-generate-001` | Video model |
+| `GEMINI_OUTPUT_DIR` | No | `./gemini-output` | Output directory for generated files |
+| `VERBOSE` | No | `false` | Enable verbose logging |
+| `QUIET` | No | `false` | Minimize logging |
 
 ## Command Line Options
 
@@ -36,85 +87,74 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
 - `-q, --quiet`: Run in quiet mode
 - `-h, --help`: Show help message
 
-## Installation Methods
-
-### Direct Installation Command
+## Installation
 
 ```bash
-claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY npx -y @rlabs/gemini-mcp
+claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY npx -y @rlabs-inc/gemini-mcp
 ```
-
-With verbosity settings:
-```bash
-# Verbose logging
-claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY VERBOSE=true npx -y @rlabs/gemini-mcp
-
-# Quiet mode
-claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_GEMINI_API_KEY QUIET=true npx -y @rlabs/gemini-mcp
-```
-
-### Manual Installation
-
-1. Install globally: `npm install -g @rlabs/gemini-mcp`
-2. Add to Claude Code with `/mcp add` and configuration JSON
-
-## MCP Tool Commands
-
-- `/gemini-query`: Direct queries to Gemini
-- `/gemini-brainstorm`: Collaborative brainstorming
-- `/gemini-analyze-code`: Code analysis
-- `/gemini-analyze-text`: Text analysis 
-- `/gemini-summarize`: Content summarization
-- `/gemini-image-prompt`: Image prompt generation
-
-## Custom Slash Commands
-
-Users can create custom slash commands for simpler usage:
-
-- Project-specific: `.claude/commands/` directory
-- Personal commands: `~/.claude/commands/` directory
-
-Examples:
-- `/project:gemini` - Direct query to Gemini
-- `/project:analyze` - Code analysis with Gemini
-- `/project:brainstorm` - Start brainstorming session
-- `/project:summarize` - Summarize content
 
 ## Development Commands
 
 ```bash
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
-
-# Run in development mode
-npm run dev
-
-# Run with verbose logging
-npm run dev -- --verbose
+bun install        # Install dependencies
+bun run build      # Build the project
+bun run dev        # Run in development mode (with watch)
+bun run dev -- -v  # Run with verbose logging
+bun run typecheck  # Type check without emitting
+bun run format     # Format code with Prettier
+bun run lint       # Lint code with ESLint
 ```
 
-## Package Information
+## Dependencies
 
-- Name: `@rlabs/gemini-mcp`
-- Binary: `gemini-mcp`
-- Version: 0.1.0
+- `@google/genai`: ^1.34.0 - Google Generative AI SDK
+- `@modelcontextprotocol/sdk`: ^1.10.2 - MCP SDK
+- `zod`: ^3.24.0 - Schema validation
 
-## Troubleshooting
+## Architecture Notes
 
-If the server doesn't connect:
+- The server uses stdio transport for communication with Claude Code
+- Image generation returns base64 data that Claude can render inline
+- Video generation is async - returns operation ID for polling
+- Generated files are saved to `GEMINI_OUTPUT_DIR`
+- Thinking levels control reasoning depth in Gemini 3
+- Image editing uses chat sessions with automatic thought signature handling
 
-1. Check installation: `npm list -g @rlabs/gemini-mcp`
-2. Verify API key configuration
-3. Try running manually: `gemini-mcp -v`
-4. Ensure internet access
+## Gemini 3 Specific Features
 
-## Future Enhancements
+### Thinking Levels
+- `minimal`: Fastest, minimal reasoning (Flash only)
+- `low`: Fast responses, basic reasoning
+- `medium`: Balanced reasoning (Flash only)
+- `high`: Deep reasoning for complex tasks (default)
 
-Potential enhancements to consider:
-- Additional Gemini models support
-- More tool integrations
-- Improved error handling and retry mechanisms
-- Support for system prompts and context management
+### Nano Banana Pro (Image Generation)
+- Model: `gemini-3-pro-image-preview`
+- Resolutions: 1K, 2K (default), 4K
+- Google Search grounding for real-world accuracy
+- High-fidelity text rendering
+
+### Thought Signatures
+- Handled automatically by the SDK when using chat sessions
+- Required for multi-turn image editing
+- Preserved in conversation history for function calling
+
+## Key Changes in v0.3.0
+
+- Gemini 3 models as default
+- Thinking levels for query tool
+- 4K image generation with Nano Banana Pro
+- 10 aspect ratios for images
+- Google Search grounding for images
+- Multi-turn image editing sessions
+- Updated all documentation
+
+## Future Roadmap
+
+See `docs/ROADMAP.md` for comprehensive implementation plan including:
+- Code execution tool
+- Google Search grounding tool
+- YouTube analysis
+- Document/PDF analysis
+- Speech generation
+- Live streaming API
