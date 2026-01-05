@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.rlabs-inc/gemini-mcp",
-  "description": "MCP server for Gemini 3 integration with Claude Code - 30+ AI tools including image/video generation, deep research, code execution, TTS, and more. Also includes a beautiful CLI with themes.",
+  "description": "Gemini 3 MCP server with 30+ tools: images, video, research, TTS, code exec & CLI",
   "repository": {
     "url": "https://github.com/RLabs-Inc/gemini-mcp",
     "source": "github"

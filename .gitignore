@@ -27,4 +27,10 @@ logs/
 *.log
 
 # Reference Documentation
-docs/references/gemini-output/
+docs/references/
+
+# Generated output
+gemini-output/
+
+# MCP Registry tokens
+.mcpregistry_*
