@@ -73,7 +73,7 @@ export function registerDeepResearchTool(server: McpServer): void {
 **What happens now:**
 1. The Deep Research Agent is autonomously planning its research approach
 2. It will search the web, read sources, and synthesize findings
-3. This typically takes 2-10 minutes depending on complexity
+3. This typically takes 5-20 minutes (max 60 min for complex queries)
 
 **To check progress:**
 Use \`gemini-check-research\` with the Research ID above.
@@ -213,7 +213,7 @@ The research task encountered an error. You can try:
 | **Elapsed** | ${elapsedMinutes}m ${elapsedSeconds}s |
 | **Query** | ${operationInfo?.prompt.substring(0, 50) || 'Unknown'}... |
 
-The agent is still working. Deep research typically takes 2-10 minutes.
+The agent is still working. Deep research typically takes 5-20 minutes (max 60 min for complex queries).
 
 Check again in 30-60 seconds using \`gemini-check-research\`.`,
               },

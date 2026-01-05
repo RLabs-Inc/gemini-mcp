@@ -6,7 +6,7 @@ This document provides essential information for Claude when working with this G
 
 This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
 
-**Version:** 0.6.0
+**Version:** 0.6.3
 **Package:** @rlabs-inc/gemini-mcp
 
 ## Key Components
@@ -66,6 +66,32 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
     - `gemini-analyze-document`: Analyze PDFs, DOCX, spreadsheets
     - `gemini-summarize-pdf`: Quick PDF summarization
     - `gemini-extract-tables`: Extract tables from documents
+
+13. **URL Context** (`url-context.ts`):
+    - `gemini-analyze-url`: Analyze content from URLs
+    - `gemini-compare-urls`: Compare content between two URLs
+    - `gemini-extract-from-url`: Extract specific data types from URLs
+
+14. **Context Caching** (`cache.ts`):
+    - `gemini-create-cache`: Cache large documents for repeated queries
+    - `gemini-query-cache`: Query cached content
+    - `gemini-list-caches`: List active caches
+    - `gemini-delete-cache`: Delete a cache
+
+15. **Speech/TTS** (`speech.ts`):
+    - `gemini-speak`: Text-to-speech with 30 voices
+    - `gemini-dialogue`: Multi-speaker dialogue generation
+    - `gemini-list-voices`: List available voices
+
+16. **Token Counting** (`token-count.ts`):
+    - `gemini-count-tokens`: Count tokens and estimate costs
+
+17. **Deep Research** (`deep-research.ts`):
+    - `gemini-deep-research`: Start autonomous multi-step research (async)
+    - `gemini-check-research`: Check research status and get results
+    - `gemini-research-followup`: Ask follow-up questions on completed research
+    - Note: Research typically takes 5-20 minutes, max 60 minutes
+    - Full response saved to `GEMINI_OUTPUT_DIR` as JSON
 
 ## Environment Variables
 
@@ -139,22 +165,20 @@ bun run lint       # Lint code with ESLint
 - Required for multi-turn image editing
 - Preserved in conversation history for function calling
 
-## Key Changes in v0.3.0
+## Key Changes in v0.6.3
 
-- Gemini 3 models as default
-- Thinking levels for query tool
-- 4K image generation with Nano Banana Pro
-- 10 aspect ratios for images
-- Google Search grounding for images
-- Multi-turn image editing sessions
-- Updated all documentation
+- **Deep Research Agent**: Autonomous multi-step research with web search
+- **Token Counting**: Count tokens and estimate costs before API calls
+- **Full 30+ tools**: All major Gemini 3 capabilities now available
+
+### Previous Versions
+- v0.6.0: TTS with 30 voices, context caching, URL analysis
+- v0.5.0: Code execution, Google Search, YouTube analysis, document analysis
+- v0.3.0: Gemini 3 models, thinking levels, 4K image gen, multi-turn editing
 
 ## Future Roadmap
 
-See `docs/ROADMAP.md` for comprehensive implementation plan including:
-- Code execution tool
-- Google Search grounding tool
-- YouTube analysis
-- Document/PDF analysis
-- Speech generation
-- Live streaming API
+See `docs/ROADMAP.md` for implementation plan. Remaining features:
+- **Lyria Music Generation**: Real-time music via WebSocket (complex)
+- **Live Streaming API**: Real-time bidirectional streaming
+- **File Search**: Search through uploaded file stores
