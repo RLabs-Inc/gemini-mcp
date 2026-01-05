@@ -27,6 +27,8 @@ import { registerDocumentTool } from './tools/document.js'
 import { registerUrlContextTool } from './tools/url-context.js'
 import { registerCacheTool } from './tools/cache.js'
 import { registerSpeechTool } from './tools/speech.js'
+import { registerTokenCountTool } from './tools/token-count.js'
+import { registerDeepResearchTool } from './tools/deep-research.js'
 
 // Import Gemini client and logger
 import { initGeminiClient } from './gemini-client.js'
@@ -125,7 +127,7 @@ async function main() {
     // Create MCP server
     const server = new McpServer({
       name: 'Gemini',
-      version: '0.5.0',
+      version: '0.6.1',
     })
 
     // Register tools
@@ -144,6 +146,8 @@ async function main() {
     registerUrlContextTool(server)
     registerCacheTool(server)
     registerSpeechTool(server)
+    registerTokenCountTool(server)
+    registerDeepResearchTool(server)
 
     // Start server with stdio transport with enhanced error handling
     const transport = new StdioServerTransport()

@@ -4,21 +4,29 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
 
-## What's New in v0.5.1
+## What's New in v0.6.0
 
-**30+ tools** for comprehensive Gemini 3 integration - the most complete Gemini MCP server available!
+**35+ tools** for comprehensive Gemini 3 integration - the most complete Gemini MCP server available!
 
-**Text-to-Speech (NEW!):**
+**Deep Research Agent (NEW!):**
+- **gemini-deep-research** - Autonomous multi-step research with web search
+- **gemini-check-research** - Poll research status and get results
+- **gemini-research-followup** - Ask follow-up questions on completed research
+
+**Token Management (NEW!):**
+- **gemini-count-tokens** - Count tokens before API calls with cost estimates
+
+**Text-to-Speech:**
 - **gemini-speak** - Convert text to speech with 30 unique voices
 - **gemini-dialogue** - Generate two-speaker conversations
 - **gemini-list-voices** - Browse all available voices
 
-**URL Analysis (NEW!):**
+**URL Analysis:**
 - **gemini-analyze-url** - Analyze web pages with questions
 - **gemini-compare-urls** - Compare two URLs side by side
 - **gemini-extract-from-url** - Extract structured data from pages
 
-**Context Caching (NEW!):**
+**Context Caching:**
 - **gemini-create-cache** - Cache large documents for repeated queries
 - **gemini-query-cache** - Query cached content efficiently
 - **gemini-list-caches** / **gemini-delete-cache** - Manage caches
@@ -40,6 +48,7 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 ### Previous Versions
 
+**v0.5.1:** Documentation updates, code quality improvements
 **v0.5.0:** 30+ tools, TTS, URL analysis, caching
 **v0.4.0:** YouTube, documents, code execution, search
 **v0.3.0:** Thinking levels, structured output
@@ -51,6 +60,8 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 | Feature                       | Description                                                     |
 |-------------------------------|-----------------------------------------------------------------|
+| **Deep Research Agent**       | Autonomous multi-step research with web search and citations    |
+| **Token Counting**            | Count tokens and estimate costs before API calls                |
 | **Text-to-Speech**            | 30 unique voices, single speaker or two-speaker dialogues       |
 | **URL Analysis**              | Analyze, compare, and extract data from web pages               |
 | **Context Caching**           | Cache large documents for efficient repeated queries            |

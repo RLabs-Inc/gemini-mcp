@@ -51,8 +51,8 @@ export type AspectRatio =
  */
 export type ImageSize = '1K' | '2K' | '4K'
 
-// Global clients
-let genAI: GoogleGenAI
+// Global clients (exported for use by other modules)
+export let genAI: GoogleGenAI
 let proModelName: string
 let flashModelName: string
 let imageModelName: string
