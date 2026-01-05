@@ -1,58 +1,49 @@
 # MCP Server Gemini
 
-A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models with Claude Code, enabling powerful collaboration between both AI systems.
+A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models with Claude Code, enabling powerful collaboration between both AI systems. Now with a beautiful CLI!
 
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
+[![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 
-## What's New in v0.6.0
+## What's New in v0.7.0
 
-**35+ tools** for comprehensive Gemini 3 integration - the most complete Gemini MCP server available!
+**Beautiful CLI with Themes!** Use Gemini directly from your terminal:
 
-**Deep Research Agent (NEW!):**
-- **gemini-deep-research** - Autonomous multi-step research with web search
-- **gemini-check-research** - Poll research status and get results
-- **gemini-research-followup** - Ask follow-up questions on completed research
+```bash
+# Install globally
+npm install -g @rlabs-inc/gemini-mcp
 
-**Token Management (NEW!):**
-- **gemini-count-tokens** - Count tokens before API calls with cost estimates
+# Set your API key once
+gemini config set api-key YOUR_KEY
 
-**Text-to-Speech:**
-- **gemini-speak** - Convert text to speech with 30 unique voices
-- **gemini-dialogue** - Generate two-speaker conversations
-- **gemini-list-voices** - Browse all available voices
+# Generate images, videos, search, research, and more!
+gemini image "a cat astronaut" --size 4K
+gemini search "latest AI news"
+gemini research "quantum computing applications" --wait
+gemini speak "Hello world" --voice Puck
+```
 
-**URL Analysis:**
-- **gemini-analyze-url** - Analyze web pages with questions
-- **gemini-compare-urls** - Compare two URLs side by side
-- **gemini-extract-from-url** - Extract structured data from pages
+**5 Beautiful Themes:** terminal, neon, ocean, forest, minimal
 
-**Context Caching:**
-- **gemini-create-cache** - Cache large documents for repeated queries
-- **gemini-query-cache** - Query cached content efficiently
-- **gemini-list-caches** / **gemini-delete-cache** - Manage caches
+**CLI Commands:**
+- `gemini query` - Direct Gemini queries with thinking levels
+- `gemini search` - Real-time web search with citations
+- `gemini research` - Deep research agent
+- `gemini image` - Generate images (up to 4K)
+- `gemini video` - Generate videos with Veo
+- `gemini speak` - Text-to-speech with 30 voices
+- `gemini tokens` - Count tokens and estimate costs
+- `gemini config` - Manage settings
 
-**Multimodal Analysis:**
-- **YouTube Analysis** - Analyze videos by URL with timestamps and clipping
-- **Document Analysis** - PDFs, DOCX, spreadsheets with table extraction
-
-**Generation & Editing:**
-- **4K Image Generation** - Up to 4K resolution with 10 aspect ratios
-- **Multi-Turn Image Editing** - Iteratively refine images through conversation
-- **Video Generation** - Create videos with Veo 2.0
-
-**Advanced Tools:**
-- **Code Execution** - Gemini writes AND runs Python code
-- **Google Search** - Real-time web information with citations
-- **Structured Output** - JSON schema responses with validation
-- **Brainstorming** - Claude + Gemini collaborative problem-solving
+**MCP Registry Support:** Now discoverable in the official MCP ecosystem!
 
 ### Previous Versions
 
-**v0.5.1:** Documentation updates, code quality improvements
-**v0.5.0:** 30+ tools, TTS, URL analysis, caching
-**v0.4.0:** YouTube, documents, code execution, search
-**v0.3.0:** Thinking levels, structured output
-**v0.2.0:** Image/Video generation with Veo
+**v0.6.x:** Deep Research, Token Counting, TTS, URL analysis, Context Caching
+**v0.5.x:** 30+ tools, YouTube analysis, Document analysis
+**v0.4.x:** Code execution, Google Search
+**v0.3.x:** Thinking levels, Structured output, 4K images
+**v0.2.x:** Image/Video generation with Veo
 
 ---
 
@@ -84,16 +75,28 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 ## Quick Installation
 
-### Using npm (Recommended)
+### MCP Server for Claude Code
 
 ```bash
+# Using npm (Recommended)
 claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY npx -y @rlabs-inc/gemini-mcp
+
+# Using bun
+claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY bunx @rlabs-inc/gemini-mcp
 ```
 
-### Using bun
+### CLI (Global Install)
 
 ```bash
-claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY bunx @rlabs-inc/gemini-mcp
+# Install globally
+npm install -g @rlabs-inc/gemini-mcp
+
+# Set your API key once (stored securely)
+gemini config set api-key YOUR_KEY
+
+# Now use any command!
+gemini search "latest news"
+gemini image "sunset over mountains" --ratio 16:9
 ```
 
 **Get your API key:** Visit [Google AI Studio](https://aistudio.google.com/apikey) - it's free and takes seconds!

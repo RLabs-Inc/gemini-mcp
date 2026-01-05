@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.rlabs-inc/gemini-mcp",
+  "description": "MCP server for Gemini 3 integration with Claude Code - 30+ AI tools including image/video generation, deep research, code execution, TTS, and more. Also includes a beautiful CLI with themes.",
+  "repository": {
+    "url": "https://github.com/RLabs-Inc/gemini-mcp",
+    "source": "github"
+  },
+  "version": "0.7.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@rlabs-inc/gemini-mcp",
+      "version": "0.7.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "GEMINI_API_KEY",
+          "description": "Your Google Gemini API key (get one at https://aistudio.google.com/apikey)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "GEMINI_OUTPUT_DIR",
+          "description": "Directory for generated files (images, videos, audio)",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}

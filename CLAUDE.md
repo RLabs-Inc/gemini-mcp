@@ -6,12 +6,15 @@ This document provides essential information for Claude when working with this G
 
 This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
 
-**Version:** 0.6.3
+**Version:** 0.7.0
 **Package:** @rlabs-inc/gemini-mcp
+**MCP Registry:** io.github.rlabs-inc/gemini-mcp
 
 ## Key Components
 
-- `src/index.ts`: Main entry point for the MCP server
+- `src/index.ts`: Dual-mode entry point (MCP server or CLI)
+- `src/server.ts`: MCP server implementation
+- `src/cli/`: CLI implementation with themes and commands
 - `src/gemini-client.ts`: Client for Google's Generative AI API (includes thinking levels, image/video generation)
 - `src/utils/logger.ts`: Logging utilities with configurable verbosity
 - `src/tools/*.ts`: Various tool implementations for integration with Claude Code

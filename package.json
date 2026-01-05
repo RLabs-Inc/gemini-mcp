@@ -1,11 +1,17 @@
 {
   "name": "@rlabs-inc/gemini-mcp",
-  "version": "0.6.3",
-  "description": "MCP server for Gemini 3 integration with Claude Code - full frontier AI capabilities",
+  "version": "0.7.0",
+  "mcpName": "io.github.rlabs-inc/gemini-mcp",
+  "description": "MCP server for Gemini 3 integration with Claude Code - 30+ AI tools including image/video generation, deep research, code execution, and beautiful CLI",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "gemini-mcp": "dist/index.js"
+    "gemini-mcp": "dist/index.js",
+    "gemini": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RLabs-Inc/gemini-mcp.git"
   },
   "scripts": {
     "build": "bun run tsc && chmod 755 dist/index.js",
