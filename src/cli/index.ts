@@ -15,6 +15,8 @@ import { searchCommand } from './commands/search.js'
 import { researchCommand } from './commands/research.js'
 import { speakCommand } from './commands/speak.js'
 import { configCommand } from './commands/config.js'
+import { imageCommand } from './commands/image.js'
+import { videoCommand } from './commands/video.js'
 
 const VERSION = '0.7.0'
 
@@ -55,13 +57,21 @@ const commands: Record<string, Command> = {
     description: 'Deep research agent',
     run: researchCommand,
   },
-  image: placeholderCommand('image'),
+  image: {
+    name: 'image',
+    description: 'Generate images',
+    run: imageCommand,
+  },
   speak: {
     name: 'speak',
     description: 'Text-to-speech',
     run: speakCommand,
   },
-  video: placeholderCommand('video'),
+  video: {
+    name: 'video',
+    description: 'Generate videos',
+    run: videoCommand,
+  },
   music: placeholderCommand('music'),
   config: {
     name: 'config',
