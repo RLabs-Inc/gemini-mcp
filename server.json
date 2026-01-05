@@ -1,17 +1,17 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.rlabs-inc/gemini-mcp",
+  "name": "io.github.RLabs-Inc/gemini-mcp",
   "description": "Gemini 3 MCP server with 30+ tools: images, video, research, TTS, code exec & CLI",
   "repository": {
     "url": "https://github.com/RLabs-Inc/gemini-mcp",
     "source": "github"
   },
-  "version": "0.7.0",
+  "version": "0.7.1",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@rlabs-inc/gemini-mcp",
-      "version": "0.7.0",
+      "version": "0.7.1",
       "transport": {
         "type": "stdio"
       },

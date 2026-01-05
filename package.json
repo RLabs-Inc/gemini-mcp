@@ -1,7 +1,7 @@
 {
   "name": "@rlabs-inc/gemini-mcp",
-  "version": "0.7.0",
-  "mcpName": "io.github.rlabs-inc/gemini-mcp",
+  "version": "0.7.1",
+  "mcpName": "io.github.RLabs-Inc/gemini-mcp",
   "description": "MCP server for Gemini 3 integration with Claude Code - 30+ AI tools including image/video generation, deep research, code execution, and beautiful CLI",
   "main": "dist/index.js",
   "type": "module",
