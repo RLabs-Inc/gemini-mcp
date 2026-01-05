@@ -11,6 +11,10 @@ import { setTheme, header, print, printError, printMuted, t } from './ui/index.j
 // Import commands
 import { queryCommand } from './commands/query.js'
 import { tokensCommand } from './commands/tokens.js'
+import { searchCommand } from './commands/search.js'
+import { researchCommand } from './commands/research.js'
+import { speakCommand } from './commands/speak.js'
+import { configCommand } from './commands/config.js'
 
 const VERSION = '0.7.0'
 
@@ -36,17 +40,34 @@ const commands: Record<string, Command> = {
     description: 'Query Gemini directly',
     run: queryCommand,
   },
-  search: placeholderCommand('search'),
+  search: {
+    name: 'search',
+    description: 'Real-time web search',
+    run: searchCommand,
+  },
   tokens: {
     name: 'tokens',
     description: 'Count tokens in text or files',
     run: tokensCommand,
   },
-  research: placeholderCommand('research'),
+  research: {
+    name: 'research',
+    description: 'Deep research agent',
+    run: researchCommand,
+  },
   image: placeholderCommand('image'),
-  speak: placeholderCommand('speak'),
+  speak: {
+    name: 'speak',
+    description: 'Text-to-speech',
+    run: speakCommand,
+  },
   video: placeholderCommand('video'),
   music: placeholderCommand('music'),
+  config: {
+    name: 'config',
+    description: 'Set API key and preferences',
+    run: configCommand,
+  },
 }
 
 function showHelp(): void {
@@ -70,6 +91,7 @@ function showHelp(): void {
   print(`  ${theme.colors.highlight('speak')}     ${theme.colors.muted('Text-to-speech')}`)
   print(`  ${theme.colors.highlight('video')}     ${theme.colors.muted('Generate videos')}`)
   print(`  ${theme.colors.highlight('music')}     ${theme.colors.muted('Generate music')}`)
+  print(`  ${theme.colors.highlight('config')}    ${theme.colors.muted('Set API key and preferences')}`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -154,13 +176,20 @@ export async function runCli(argv: string[]): Promise<void> {
   // Check if command has --help flag (don't require API key for help)
   const isCommandHelp = commandArgs.includes('--help') || commandArgs.includes('-h')
 
-  // Check for API key (only needed for actual commands, not help)
-  if (!isCommandHelp) {
+  // Commands that don't need API key
+  const noApiKeyCommands = ['config']
+
+  // Check for API key (only needed for actual commands, not help or config)
+  if (!isCommandHelp && !noApiKeyCommands.includes(commandName)) {
     const apiKey = getApiKey(config)
     if (!apiKey) {
       printError('GEMINI_API_KEY environment variable is required')
-      printMuted('Set it in your shell or in ~/.config/gemini-cli/config.json')
+      printMuted('Set it with: gemini config set api-key YOUR_KEY')
       process.exit(1)
+    }
+    // Set env var from config for gemini-client.ts to use
+    if (!process.env.GEMINI_API_KEY && apiKey) {
+      process.env.GEMINI_API_KEY = apiKey
     }
   }
 
