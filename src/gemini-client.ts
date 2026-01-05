@@ -558,3 +558,129 @@ export async function checkVideoStatus(
 export function getOutputDir(): string {
   return outputDir
 }
+
+/**
+ * Token count result
+ */
+export interface TokenCountResult {
+  totalTokens: number
+  modelName: string
+}
+
+/**
+ * Count tokens for content using specified model
+ */
+export async function countTokens(
+  content: string,
+  model: 'pro' | 'flash' = 'flash'
+): Promise<TokenCountResult> {
+  const modelName = model === 'pro' ? proModelName : flashModelName
+
+  const result = await genAI.models.countTokens({
+    model: modelName,
+    contents: content,
+  })
+
+  return {
+    totalTokens: result.totalTokens || 0,
+    modelName,
+  }
+}
+
+/**
+ * Deep Research interaction result
+ */
+export interface DeepResearchResult {
+  id: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  outputs?: { text?: string }[]
+  error?: string
+}
+
+// Deep Research agent model
+const DEEP_RESEARCH_AGENT = 'deep-research-pro-preview-12-2025'
+
+/**
+ * Start a deep research task
+ */
+export async function startDeepResearch(
+  prompt: string
+): Promise<DeepResearchResult> {
+  try {
+    // The Interactions API - cast to any since it may not be in SDK types yet
+    const interaction = await (genAI as unknown as { interactions: { create: (config: unknown) => Promise<{ id?: string }> } }).interactions.create({
+      input: prompt,
+      agent: DEEP_RESEARCH_AGENT,
+      background: true,
+      agentConfig: {
+        type: 'deep-research',
+        thinkingSummaries: 'auto',
+      },
+    })
+
+    return {
+      id: interaction.id || `research-${Date.now()}`,
+      status: 'pending',
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Deep research not available: ${message}`)
+  }
+}
+
+/**
+ * Check deep research status
+ */
+export async function checkDeepResearch(
+  researchId: string
+): Promise<DeepResearchResult> {
+  try {
+    const interaction = await (genAI as unknown as { interactions: { get: (id: string) => Promise<{ status?: string; outputs?: { text?: string }[]; error?: string }> } }).interactions.get(researchId)
+
+    const status = interaction.status || 'unknown'
+
+    if (status === 'completed') {
+      return {
+        id: researchId,
+        status: 'completed',
+        outputs: interaction.outputs,
+      }
+    } else if (status === 'failed') {
+      return {
+        id: researchId,
+        status: 'failed',
+        error: interaction.error || 'Unknown error',
+      }
+    }
+
+    return {
+      id: researchId,
+      status: 'processing',
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Failed to check research status: ${message}`)
+  }
+}
+
+/**
+ * Follow up on completed research
+ */
+export async function followUpResearch(
+  researchId: string,
+  question: string
+): Promise<string> {
+  try {
+    const interaction = await (genAI as unknown as { interactions: { create: (config: unknown) => Promise<{ outputs?: { text?: string }[] }> } }).interactions.create({
+      input: question,
+      model: proModelName,
+      previousInteractionId: researchId,
+    })
+
+    const outputs = interaction.outputs || []
+    return outputs.length > 0 ? outputs[outputs.length - 1].text || 'No response' : 'No response received'
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    throw new Error(`Research follow-up failed: ${message}`)
+  }
+}

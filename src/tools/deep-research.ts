@@ -5,20 +5,23 @@
  * The agent autonomously plans, searches, reads, and synthesizes research.
  */
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-import { logger } from "../utils/logger.js";
-import { genAI } from "../gemini-client.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { z } from 'zod'
+import { logger } from '../utils/logger.js'
+import {
+  startDeepResearch,
+  checkDeepResearch,
+  followUpResearch,
+} from '../gemini-client.js'
 
 // Store active research operations for polling
-const activeResearchOperations = new Map<string, {
-  interactionId: string;
-  startedAt: Date;
-  prompt: string;
-}>();
-
-// Deep Research agent model
-const DEEP_RESEARCH_AGENT = "deep-research-pro-preview-12-2025";
+const activeResearchOperations = new Map<
+  string,
+  {
+    startedAt: Date
+    prompt: string
+  }
+>()
 
 /**
  * Register deep research tools with the MCP server
@@ -26,55 +29,43 @@ const DEEP_RESEARCH_AGENT = "deep-research-pro-preview-12-2025";
 export function registerDeepResearchTool(server: McpServer): void {
   // Start a deep research task
   server.tool(
-    "gemini-deep-research",
+    'gemini-deep-research',
     {
-      query: z.string().describe("The research question or topic to investigate"),
+      query: z.string().describe('The research question or topic to investigate'),
       format: z
         .string()
         .optional()
         .describe("Optional output format instructions (e.g., 'technical report with sections')"),
     },
     async ({ query, format }) => {
-      logger.info(`Starting deep research: ${query.substring(0, 50)}...`);
+      logger.info(`Starting deep research: ${query.substring(0, 50)}...`)
 
       try {
         // Build the research prompt with optional formatting
-        let researchPrompt = query;
+        let researchPrompt = query
         if (format) {
-          researchPrompt = `${query}\n\nFormat the output as: ${format}`;
+          researchPrompt = `${query}\n\nFormat the output as: ${format}`
         }
 
-        // Start the research task in the background
-        // The Interactions API is accessed via genAI.interactions
-        const interaction = await (genAI as any).interactions.create({
-          input: researchPrompt,
-          agent: DEEP_RESEARCH_AGENT,
-          background: true,
-          agentConfig: {
-            type: "deep-research",
-            thinkingSummaries: "auto"
-          }
-        });
-
-        const interactionId = interaction.id || `research-${Date.now()}`;
+        const result = await startDeepResearch(researchPrompt)
 
         // Store for later polling
-        activeResearchOperations.set(interactionId, {
-          interactionId,
+        activeResearchOperations.set(result.id, {
           startedAt: new Date(),
-          prompt: query
-        });
+          prompt: query,
+        })
 
-        logger.info(`Deep research started: ${interactionId}`);
+        logger.info(`Deep research started: ${result.id}`)
 
         return {
-          content: [{
-            type: "text",
-            text: `**Deep Research Started**
+          content: [
+            {
+              type: 'text',
+              text: `**Deep Research Started**
 
 | Field | Value |
 |-------|-------|
-| **Research ID** | \`${interactionId}\` |
+| **Research ID** | \`${result.id}\` |
 | **Query** | ${query.substring(0, 100)}${query.length > 100 ? '...' : ''} |
 | **Status** | In Progress |
 | **Started** | ${new Date().toISOString()} |
@@ -87,19 +78,21 @@ export function registerDeepResearchTool(server: McpServer): void {
 **To check progress:**
 Use \`gemini-check-research\` with the Research ID above.
 
-**Note:** Deep research tasks run in the background. You can continue working while waiting.`
-          }]
-        };
+**Note:** Deep research tasks run in the background. You can continue working while waiting.`,
+            },
+          ],
+        }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logger.error(`Error starting deep research: ${errorMessage}`);
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        logger.error(`Error starting deep research: ${errorMessage}`)
 
         // Check if it's an API availability issue
-        if (errorMessage.includes("interactions") || errorMessage.includes("not found")) {
+        if (errorMessage.includes('not available') || errorMessage.includes('interactions')) {
           return {
-            content: [{
-              type: "text",
-              text: `**Deep Research Not Available**
+            content: [
+              {
+                type: 'text',
+                text: `**Deep Research Not Available**
 
 The Interactions API required for Deep Research may not be available yet in your SDK version or API access.
 
@@ -108,58 +101,56 @@ The Interactions API required for Deep Research may not be available yet in your
 **Alternatives:**
 - Use \`gemini-search\` for real-time web search
 - Use \`gemini-query\` with a detailed research prompt
-- Wait for Interactions API to become available in your region`
-            }],
-            isError: true
-          };
+- Wait for Interactions API to become available in your region`,
+              },
+            ],
+            isError: true,
+          }
         }
 
         return {
-          content: [{ type: "text", text: `Error starting deep research: ${errorMessage}` }],
-          isError: true
-        };
+          content: [{ type: 'text', text: `Error starting deep research: ${errorMessage}` }],
+          isError: true,
+        }
       }
     }
-  );
+  )
 
   // Check research status
   server.tool(
-    "gemini-check-research",
+    'gemini-check-research',
     {
-      researchId: z.string().describe("The research ID returned from gemini-deep-research")
+      researchId: z.string().describe('The research ID returned from gemini-deep-research'),
     },
     async ({ researchId }) => {
-      logger.info(`Checking research status: ${researchId}`);
+      logger.info(`Checking research status: ${researchId}`)
 
       try {
         // Get stored operation info
-        const operationInfo = activeResearchOperations.get(researchId);
+        const operationInfo = activeResearchOperations.get(researchId)
+        const elapsedMs = operationInfo ? Date.now() - operationInfo.startedAt.getTime() : 0
+        const elapsedMinutes = Math.floor(elapsedMs / 60000)
+        const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000)
 
-        // Get the current status
-        const interaction = await (genAI as any).interactions.get(researchId);
+        const result = await checkDeepResearch(researchId)
 
-        const status = interaction.status || "unknown";
-        const elapsedMs = operationInfo
-          ? Date.now() - operationInfo.startedAt.getTime()
-          : 0;
-        const elapsedMinutes = Math.floor(elapsedMs / 60000);
-        const elapsedSeconds = Math.floor((elapsedMs % 60000) / 1000);
-
-        if (status === "completed") {
+        if (result.status === 'completed') {
           // Research is done - extract the result
-          activeResearchOperations.delete(researchId);
+          activeResearchOperations.delete(researchId)
 
-          const outputs = interaction.outputs || [];
-          const result = outputs.length > 0
-            ? outputs[outputs.length - 1].text || "No text output"
-            : "Research completed but no output found";
+          const outputs = result.outputs || []
+          const resultText =
+            outputs.length > 0
+              ? outputs[outputs.length - 1].text || 'No text output'
+              : 'Research completed but no output found'
 
-          logger.info(`Research completed: ${researchId}`);
+          logger.info(`Research completed: ${researchId}`)
 
           return {
-            content: [{
-              type: "text",
-              text: `**Deep Research Complete**
+            content: [
+              {
+                type: 'text',
+                text: `**Deep Research Complete**
 
 | Field | Value |
 |-------|-------|
@@ -171,106 +162,103 @@ The Interactions API required for Deep Research may not be available yet in your
 
 ## Research Results
 
-${result}`
-            }]
-          };
-        } else if (status === "failed") {
-          activeResearchOperations.delete(researchId);
+${resultText}`,
+              },
+            ],
+          }
+        } else if (result.status === 'failed') {
+          activeResearchOperations.delete(researchId)
 
-          const errorInfo = interaction.error || "Unknown error";
-          logger.error(`Research failed: ${researchId} - ${errorInfo}`);
+          logger.error(`Research failed: ${researchId} - ${result.error}`)
 
           return {
-            content: [{
-              type: "text",
-              text: `**Deep Research Failed**
+            content: [
+              {
+                type: 'text',
+                text: `**Deep Research Failed**
 
 | Field | Value |
 |-------|-------|
 | **Research ID** | \`${researchId}\` |
 | **Status** | ❌ Failed |
-| **Error** | ${errorInfo} |
+| **Error** | ${result.error} |
 
 The research task encountered an error. You can try:
 - Starting a new research task with a different query
-- Using \`gemini-search\` for simpler web searches`
-            }],
-            isError: true
-          };
+- Using \`gemini-search\` for simpler web searches`,
+              },
+            ],
+            isError: true,
+          }
         } else {
           // Still in progress
           return {
-            content: [{
-              type: "text",
-              text: `**Deep Research In Progress**
+            content: [
+              {
+                type: 'text',
+                text: `**Deep Research In Progress**
 
 | Field | Value |
 |-------|-------|
 | **Research ID** | \`${researchId}\` |
-| **Status** | ⏳ ${status} |
+| **Status** | ⏳ ${result.status} |
 | **Elapsed** | ${elapsedMinutes}m ${elapsedSeconds}s |
 | **Query** | ${operationInfo?.prompt.substring(0, 50) || 'Unknown'}... |
 
 The agent is still working. Deep research typically takes 2-10 minutes.
 
-Check again in 30-60 seconds using \`gemini-check-research\`.`
-            }]
-          };
+Check again in 30-60 seconds using \`gemini-check-research\`.`,
+              },
+            ],
+          }
         }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logger.error(`Error checking research status: ${errorMessage}`);
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        logger.error(`Error checking research status: ${errorMessage}`)
 
         return {
-          content: [{ type: "text", text: `Error checking research status: ${errorMessage}` }],
-          isError: true
-        };
+          content: [{ type: 'text', text: `Error checking research status: ${errorMessage}` }],
+          isError: true,
+        }
       }
     }
-  );
+  )
 
   // Follow-up on completed research
   server.tool(
-    "gemini-research-followup",
+    'gemini-research-followup',
     {
-      researchId: z.string().describe("The research ID from a completed research task"),
-      question: z.string().describe("Follow-up question about the research results")
+      researchId: z.string().describe('The research ID from a completed research task'),
+      question: z.string().describe('Follow-up question about the research results'),
     },
     async ({ researchId, question }) => {
-      logger.info(`Research follow-up on ${researchId}: ${question.substring(0, 50)}...`);
+      logger.info(`Research follow-up on ${researchId}: ${question.substring(0, 50)}...`)
 
       try {
-        const interaction = await (genAI as any).interactions.create({
-          input: question,
-          model: "gemini-3-pro-preview",
-          previousInteractionId: researchId
-        });
-
-        const outputs = interaction.outputs || [];
-        const result = outputs.length > 0
-          ? outputs[outputs.length - 1].text || "No response"
-          : "No response received";
+        const result = await followUpResearch(researchId, question)
 
         return {
-          content: [{
-            type: "text",
-            text: `**Research Follow-up**
+          content: [
+            {
+              type: 'text',
+              text: `**Research Follow-up**
 
 **Question:** ${question}
 
 **Answer:**
-${result}`
-          }]
-        };
+${result}`,
+            },
+          ],
+        }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        logger.error(`Error with research follow-up: ${errorMessage}`);
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        logger.error(`Error with research follow-up: ${errorMessage}`)
 
         return {
-          content: [{ type: "text", text: `Error with follow-up: ${errorMessage}` }],
-          isError: true
-        };
+          content: [{ type: 'text', text: `Error with follow-up: ${errorMessage}` }],
+          isError: true,
+        }
       }
     }
-  );
+  )
 }

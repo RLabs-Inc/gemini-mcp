@@ -1,6 +1,6 @@
 {
   "name": "@rlabs-inc/gemini-mcp",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "MCP server for Gemini 3 integration with Claude Code - full frontier AI capabilities",
   "main": "dist/index.js",
   "type": "module",
