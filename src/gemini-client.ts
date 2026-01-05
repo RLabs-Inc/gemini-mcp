@@ -595,6 +595,7 @@ export interface DeepResearchResult {
   status: 'pending' | 'processing' | 'completed' | 'failed'
   outputs?: { text?: string }[]
   error?: string
+  savedPath?: string  // Path to full response JSON file
 }
 
 // Deep Research agent model
@@ -607,14 +608,14 @@ export async function startDeepResearch(
   prompt: string
 ): Promise<DeepResearchResult> {
   try {
-    // The Interactions API - cast to any since it may not be in SDK types yet
-    const interaction = await (genAI as unknown as { interactions: { create: (config: unknown) => Promise<{ id?: string }> } }).interactions.create({
+    // The Interactions API is properly typed in @google/genai v1.34.0+
+    const interaction = await genAI.interactions.create({
       input: prompt,
       agent: DEEP_RESEARCH_AGENT,
       background: true,
-      agentConfig: {
+      agent_config: {
         type: 'deep-research',
-        thinkingSummaries: 'auto',
+        thinking_summaries: 'auto',
       },
     })
 
@@ -635,21 +636,42 @@ export async function checkDeepResearch(
   researchId: string
 ): Promise<DeepResearchResult> {
   try {
-    const interaction = await (genAI as unknown as { interactions: { get: (id: string) => Promise<{ status?: string; outputs?: { text?: string }[]; error?: string }> } }).interactions.get(researchId)
+    const interaction = await genAI.interactions.get(researchId)
 
     const status = interaction.status || 'unknown'
 
     if (status === 'completed') {
+      // Save the FULL raw response to the output directory
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+      const outputPath = path.join(getOutputDir(), `deep-research-${timestamp}.json`)
+      const fullResponse = {
+        id: researchId,
+        status: interaction.status,
+        created: interaction.created,
+        agent: interaction.agent,
+        model: interaction.model,
+        outputs: interaction.outputs,
+        rawInteraction: interaction,
+      }
+      fs.writeFileSync(outputPath, JSON.stringify(fullResponse, null, 2))
+      logger.info(`Full deep research response saved to: ${outputPath}`)
+
+      // Extract text for the summary (but full data is saved)
+      const textOutputs = (interaction.outputs || [])
+        .filter((output) => 'type' in output && output.type === 'text')
+        .map(output => ({ text: (output as { text?: string }).text }))
+
       return {
         id: researchId,
         status: 'completed',
-        outputs: interaction.outputs,
+        outputs: textOutputs,
+        savedPath: outputPath,
       }
-    } else if (status === 'failed') {
+    } else if (status === 'failed' || status === 'cancelled') {
       return {
         id: researchId,
         status: 'failed',
-        error: interaction.error || 'Unknown error',
+        error: 'Research task failed or was cancelled',
       }
     }
 
@@ -671,14 +693,24 @@ export async function followUpResearch(
   question: string
 ): Promise<string> {
   try {
-    const interaction = await (genAI as unknown as { interactions: { create: (config: unknown) => Promise<{ outputs?: { text?: string }[] }> } }).interactions.create({
+    const interaction = await genAI.interactions.create({
       input: question,
       model: proModelName,
-      previousInteractionId: researchId,
+      previous_interaction_id: researchId,
     })
 
+    // Extract text from TextContent outputs
     const outputs = interaction.outputs || []
-    return outputs.length > 0 ? outputs[outputs.length - 1].text || 'No response' : 'No response received'
+    const textOutputs = outputs
+      .filter((output) => 'type' in output && output.type === 'text')
+      .map(output => (output as { text?: string }).text)
+      .filter((text): text is string => !!text)
+
+    if (textOutputs.length > 0) {
+      return textOutputs[textOutputs.length - 1]
+    }
+
+    return 'No text response received'
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     throw new Error(`Research follow-up failed: ${message}`)

@@ -146,6 +146,11 @@ The Interactions API required for Deep Research may not be available yet in your
 
           logger.info(`Research completed: ${researchId}`)
 
+          // Build the saved path info if available
+          const savedPathInfo = result.savedPath
+            ? `| **Full Response** | \`${result.savedPath}\` |`
+            : ''
+
           return {
             content: [
               {
@@ -157,6 +162,9 @@ The Interactions API required for Deep Research may not be available yet in your
 | **Research ID** | \`${researchId}\` |
 | **Status** | ✅ Completed |
 | **Duration** | ${elapsedMinutes}m ${elapsedSeconds}s |
+${savedPathInfo}
+
+> **Note:** The full response (including citations, images, and all metadata) has been saved to the file above.
 
 ---
 

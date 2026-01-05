@@ -127,7 +127,7 @@ async function main() {
     // Create MCP server
     const server = new McpServer({
       name: 'Gemini',
-      version: '0.6.2',
+      version: '0.6.3',
     })
 
     // Register tools
