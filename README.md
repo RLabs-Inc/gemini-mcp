@@ -4,33 +4,45 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
 
-## What's New in v0.4.0
+## What's New in v0.5.1
 
-**20+ tools** for comprehensive Gemini 3 integration:
+**30+ tools** for comprehensive Gemini 3 integration - the most complete Gemini MCP server available!
+
+**Text-to-Speech (NEW!):**
+- **gemini-speak** - Convert text to speech with 30 unique voices
+- **gemini-dialogue** - Generate two-speaker conversations
+- **gemini-list-voices** - Browse all available voices
+
+**URL Analysis (NEW!):**
+- **gemini-analyze-url** - Analyze web pages with questions
+- **gemini-compare-urls** - Compare two URLs side by side
+- **gemini-extract-from-url** - Extract structured data from pages
+
+**Context Caching (NEW!):**
+- **gemini-create-cache** - Cache large documents for repeated queries
+- **gemini-query-cache** - Query cached content efficiently
+- **gemini-list-caches** / **gemini-delete-cache** - Manage caches
 
 **Multimodal Analysis:**
 - **YouTube Analysis** - Analyze videos by URL with timestamps and clipping
 - **Document Analysis** - PDFs, DOCX, spreadsheets with table extraction
 
 **Generation & Editing:**
-- **4K Image Generation** - Up to 4K resolution with Nano Banana Pro
-- **10 Aspect Ratios** - 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9
+- **4K Image Generation** - Up to 4K resolution with 10 aspect ratios
 - **Multi-Turn Image Editing** - Iteratively refine images through conversation
-- **Google Search Grounding** - Ground images in real-world information
+- **Video Generation** - Create videos with Veo 2.0
 
 **Advanced Tools:**
-- **Code Execution** - Gemini writes AND runs Python code (pandas, matplotlib, numpy, etc.)
+- **Code Execution** - Gemini writes AND runs Python code
 - **Google Search** - Real-time web information with citations
 - **Structured Output** - JSON schema responses with validation
-- **Data Extraction** - Extract entities, facts, sentiment from text
-
-**Core Improvements:**
-- **Thinking Levels** - Control reasoning depth: minimal, low, medium, high
-- **Gemini 3 Models** - Updated to latest frontier models
+- **Brainstorming** - Claude + Gemini collaborative problem-solving
 
 ### Previous Versions
 
-**v0.3.0:** Phase 2-3 features (thinking levels, code execution, search)
+**v0.5.0:** 30+ tools, TTS, URL analysis, caching
+**v0.4.0:** YouTube, documents, code execution, search
+**v0.3.0:** Thinking levels, structured output
 **v0.2.0:** Image/Video generation with Veo
 
 ---
@@ -39,18 +51,21 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 
 | Feature                       | Description                                                     |
 |-------------------------------|-----------------------------------------------------------------|
+| **Text-to-Speech**            | 30 unique voices, single speaker or two-speaker dialogues       |
+| **URL Analysis**              | Analyze, compare, and extract data from web pages               |
+| **Context Caching**           | Cache large documents for efficient repeated queries            |
 | **YouTube Analysis**          | Analyze videos by URL with timestamp clipping                   |
 | **Document Analysis**         | PDFs, DOCX, spreadsheets with table extraction                  |
 | **4K Image Generation**       | Generate images up to 4K with 10 aspect ratios                  |
 | **Multi-Turn Image Editing**  | Iteratively refine images through conversation                  |
-| **Video Generation**          | Create videos with Veo (async with polling)                     |
+| **Video Generation**          | Create videos with Veo 2.0 (async with polling)                 |
 | **Code Execution**            | Gemini writes and runs Python code (pandas, numpy, matplotlib)  |
 | **Google Search**             | Real-time web information with inline citations                 |
 | **Structured Output**         | JSON responses with schema validation                           |
 | **Data Extraction**           | Extract entities, facts, sentiment from text                    |
 | **Thinking Levels**           | Control reasoning depth (minimal/low/medium/high)               |
 | **Direct Query**              | Send prompts to Gemini 3 Pro/Flash models                       |
-| **Brainstorming**             | Collaborative problem-solving                                   |
+| **Brainstorming**             | Claude + Gemini collaborative problem-solving                   |
 | **Code Analysis**             | Analyze code for quality, security, performance                 |
 | **Summarization**             | Summarize content at different detail levels                    |
 

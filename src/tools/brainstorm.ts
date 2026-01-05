@@ -16,6 +16,9 @@ interface Round {
   consensusScore: number;
 }
 
+/** Consensus threshold - score at which brainstorming is considered complete */
+const CONSENSUS_THRESHOLD = 8;
+
 /**
  * Register brainstorm tool with the MCP server
  */
@@ -77,7 +80,7 @@ Format this as: "Consensus Score: [NUMBER]"
         });
         
         // Check if we already have consensus
-        if (consensusScore >= 8) {
+        if (consensusScore >= CONSENSUS_THRESHOLD) {
           logger.info(`Consensus reached in first round with score ${consensusScore}`);
           consensusReached = true;
         }
@@ -171,7 +174,7 @@ Format: "Consensus Score: [NUMBER]"
           });
           
           // Check if we've reached consensus
-          if (geminiConsensusScore >= 8 || claudeConsensusScore >= 8) {
+          if (geminiConsensusScore >= CONSENSUS_THRESHOLD || claudeConsensusScore >= CONSENSUS_THRESHOLD) {
             logger.info(`Consensus reached in round ${currentRound} with score ${geminiConsensusScore}`);
             consensusReached = true;
           }
