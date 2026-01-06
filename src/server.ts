@@ -128,7 +128,7 @@ For CLI mode, run: gemini --help
     // Create MCP server
     const server = new McpServer({
       name: 'Gemini',
-      version: '0.7.1',
+      version: '0.7.2',
     })
 
     // Register tools

@@ -18,7 +18,7 @@ import { configCommand } from './commands/config.js'
 import { imageCommand } from './commands/image.js'
 import { videoCommand } from './commands/video.js'
 
-const VERSION = '0.7.1'
+const VERSION = '0.7.2'
 
 interface Command {
   name: string

@@ -6,12 +6,12 @@
     "url": "https://github.com/RLabs-Inc/gemini-mcp",
     "source": "github"
   },
-  "version": "0.7.1",
+  "version": "0.7.2",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@rlabs-inc/gemini-mcp",
-      "version": "0.7.1",
+      "version": "0.7.2",
       "transport": {
         "type": "stdio"
       },

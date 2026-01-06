@@ -5,7 +5,7 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 
-## What's New in v0.7.1
+## What's New in v0.7.2
 
 **Beautiful CLI with Themes!** Use Gemini directly from your terminal:
 
