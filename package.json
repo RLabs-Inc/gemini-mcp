@@ -7,7 +7,7 @@
   "type": "module",
   "bin": {
     "gemini-mcp": "dist/index.js",
-    "gemini": "dist/index.js"
+    "gcli": "dist/index.js"
   },
   "repository": {
     "type": "git",

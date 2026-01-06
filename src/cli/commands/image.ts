@@ -2,7 +2,7 @@
  * Image Command
  *
  * Generate images with Gemini's Imagen model.
- * gemini image "a cat in space"
+ * gcli image "a cat in space"
  */
 
 import { parseArgs } from 'node:util'
@@ -18,11 +18,11 @@ const VALID_RATIOS = ['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini image', 'Generate images with AI'))
+  print(header('gcli image', 'Generate images with AI'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini image ${theme.colors.muted('"your prompt"')} [options]`)
+  print(`  gcli image ${theme.colors.muted('"your prompt"')} [options]`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -44,10 +44,10 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini image "a cat astronaut floating in space"'))
-  print(theme.colors.muted('  gemini image "sunset over mountains" --ratio 16:9 --size 4K'))
-  print(theme.colors.muted('  gemini image "portrait of a robot" -r 3:4 --style "oil painting"'))
-  print(theme.colors.muted('  gemini image "Eiffel Tower at night" --search'))
+  print(theme.colors.muted('  gcli image "a cat astronaut floating in space"'))
+  print(theme.colors.muted('  gcli image "sunset over mountains" --ratio 16:9 --size 4K'))
+  print(theme.colors.muted('  gcli image "portrait of a robot" -r 3:4 --style "oil painting"'))
+  print(theme.colors.muted('  gcli image "Eiffel Tower at night" --search'))
 }
 
 export async function imageCommand(argv: string[]): Promise<void> {
@@ -73,7 +73,7 @@ export async function imageCommand(argv: string[]): Promise<void> {
   const prompt = positionals.join(' ')
   if (!prompt) {
     printError('No image prompt provided')
-    printMuted('Usage: gemini image "your prompt"')
+    printMuted('Usage: gcli image "your prompt"')
     process.exit(1)
   }
 

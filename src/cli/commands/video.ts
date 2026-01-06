@@ -2,7 +2,7 @@
  * Video Command
  *
  * Generate videos with Gemini's Veo model.
- * gemini video "a cat playing piano"
+ * gcli video "a cat playing piano"
  */
 
 import { parseArgs } from 'node:util'
@@ -13,11 +13,11 @@ import { spinner, progress, print, printError, printSuccess, printMuted, printWa
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini video', 'Generate videos with AI'))
+  print(header('gcli video', 'Generate videos with AI'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini video ${theme.colors.muted('"your prompt"')} [options]`)
+  print(`  gcli video ${theme.colors.muted('"your prompt"')} [options]`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -28,9 +28,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini video "a cat playing piano"'))
-  print(theme.colors.muted('  gemini video "sunset timelapse" --ratio 16:9 --wait'))
-  print(theme.colors.muted('  gemini video "robot dancing" -r 9:16 --negative "text, blur"'))
+  print(theme.colors.muted('  gcli video "a cat playing piano"'))
+  print(theme.colors.muted('  gcli video "sunset timelapse" --ratio 16:9 --wait'))
+  print(theme.colors.muted('  gcli video "robot dancing" -r 9:16 --negative "text, blur"'))
   print('')
 
   print(theme.colors.warning(`${theme.symbols.warning} Video generation can take 2-5 minutes`))
@@ -57,7 +57,7 @@ export async function videoCommand(argv: string[]): Promise<void> {
   const prompt = positionals.join(' ')
   if (!prompt) {
     printError('No video prompt provided')
-    printMuted('Usage: gemini video "your prompt"')
+    printMuted('Usage: gcli video "your prompt"')
     process.exit(1)
   }
 

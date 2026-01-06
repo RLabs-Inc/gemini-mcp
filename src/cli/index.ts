@@ -18,7 +18,7 @@ import { configCommand } from './commands/config.js'
 import { imageCommand } from './commands/image.js'
 import { videoCommand } from './commands/video.js'
 
-const VERSION = '0.7.0'
+const VERSION = '0.7.1'
 
 interface Command {
   name: string
@@ -89,7 +89,7 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini ${theme.colors.muted('<command>')} [options]`)
+  print(`  gcli ${theme.colors.muted('<command>')} [options]`)
   print('')
 
   print(theme.colors.primary('Commands:'))
@@ -111,18 +111,18 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini query "What is the meaning of life?"'))
-  print(theme.colors.muted('  gemini search "latest AI news"'))
-  print(theme.colors.muted('  gemini image "a cat in space" --size 4K'))
-  print(theme.colors.muted('  gemini research "MCP ecosystem" --format outline'))
+  print(theme.colors.muted('  gcli query "What is the meaning of life?"'))
+  print(theme.colors.muted('  gcli search "latest AI news"'))
+  print(theme.colors.muted('  gcli image "a cat in space" --size 4K'))
+  print(theme.colors.muted('  gcli research "MCP ecosystem" --format outline'))
   print('')
 
-  print(theme.colors.muted(`Run 'gemini <command> --help' for command-specific options.`))
+  print(theme.colors.muted(`Run 'gcli <command> --help' for command-specific options.`))
 }
 
 function showVersion(): void {
   const theme = t()
-  print(`${theme.colors.primary('gemini')} ${theme.colors.highlight(`v${VERSION}`)}`)
+  print(`${theme.colors.primary('gcli')} ${theme.colors.highlight(`v${VERSION}`)}`)
 }
 
 export async function runCli(argv: string[]): Promise<void> {
@@ -176,7 +176,7 @@ export async function runCli(argv: string[]): Promise<void> {
 
   if (!command) {
     printError(`Unknown command: ${commandName}`)
-    printMuted(`Run 'gemini --help' for available commands`)
+    printMuted(`Run 'gcli --help' for available commands`)
     process.exit(1)
   }
 
@@ -194,7 +194,7 @@ export async function runCli(argv: string[]): Promise<void> {
     const apiKey = getApiKey(config)
     if (!apiKey) {
       printError('GEMINI_API_KEY environment variable is required')
-      printMuted('Set it with: gemini config set api-key YOUR_KEY')
+      printMuted('Set it with: gcli config set api-key YOUR_KEY')
       process.exit(1)
     }
     // Set env var from config for gemini-client.ts to use

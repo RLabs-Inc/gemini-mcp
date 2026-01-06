@@ -2,8 +2,8 @@
  * Config Command
  *
  * Set and view CLI configuration.
- * gemini config set api-key YOUR_KEY
- * gemini config show
+ * gcli config set api-key YOUR_KEY
+ * gcli config show
  */
 
 import { parseArgs } from 'node:util'
@@ -13,11 +13,11 @@ import { print, printError, printSuccess, printMuted, printWarning, t, header, b
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini config', 'CLI configuration'))
+  print(header('gcli config', 'CLI configuration'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini config ${theme.colors.muted('<command>')} [options]`)
+  print(`  gcli config ${theme.colors.muted('<command>')} [options]`)
   print('')
 
   print(theme.colors.primary('Commands:'))
@@ -35,10 +35,10 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini config set api-key AIzaSy...'))
-  print(theme.colors.muted('  gemini config set theme neon'))
-  print(theme.colors.muted('  gemini config set output-dir ~/Documents/Gemini'))
-  print(theme.colors.muted('  gemini config show'))
+  print(theme.colors.muted('  gcli config set api-key AIzaSy...'))
+  print(theme.colors.muted('  gcli config set theme neon'))
+  print(theme.colors.muted('  gcli config set output-dir ~/Documents/Gemini'))
+  print(theme.colors.muted('  gcli config show'))
 }
 
 async function showConfig(): Promise<void> {
@@ -63,7 +63,7 @@ async function showConfig(): Promise<void> {
 
   if (!config.apiKey) {
     printWarning('API key not set. Set it with:')
-    print(theme.colors.muted('  gemini config set api-key YOUR_API_KEY'))
+    print(theme.colors.muted('  gcli config set api-key YOUR_API_KEY'))
     print('')
     print(theme.colors.muted('Or set the GEMINI_API_KEY environment variable.'))
   }
@@ -160,8 +160,8 @@ export async function configCommand(argv: string[]): Promise<void> {
       const value = positionals.slice(2).join(' ')
 
       if (!key || !value) {
-        printError('Usage: gemini config set <key> <value>')
-        printMuted('Example: gemini config set api-key YOUR_KEY')
+        printError('Usage: gcli config set <key> <value>')
+        printMuted('Example: gcli config set api-key YOUR_KEY')
         process.exit(1)
       }
 

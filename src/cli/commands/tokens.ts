@@ -2,8 +2,8 @@
  * Tokens Command
  *
  * Count tokens in text or files.
- * gemini tokens "your text"
- * gemini tokens @file.txt
+ * gcli tokens "your text"
+ * gcli tokens @file.txt
  */
 
 import { parseArgs } from 'node:util'
@@ -14,12 +14,12 @@ import { spinner, print, printError, printMuted, t, header, box } from '../ui/in
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini tokens', 'Count tokens in text or files'))
+  print(header('gcli tokens', 'Count tokens in text or files'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini tokens ${theme.colors.muted('"your text"')}`)
-  print(`  gemini tokens ${theme.colors.muted('@file.txt')}`)
+  print(`  gcli tokens ${theme.colors.muted('"your text"')}`)
+  print(`  gcli tokens ${theme.colors.muted('@file.txt')}`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -28,9 +28,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini tokens "Hello, world!"'))
-  print(theme.colors.muted('  gemini tokens @README.md'))
-  print(theme.colors.muted('  gemini tokens @src/index.ts --model pro'))
+  print(theme.colors.muted('  gcli tokens "Hello, world!"'))
+  print(theme.colors.muted('  gcli tokens @README.md'))
+  print(theme.colors.muted('  gcli tokens @src/index.ts --model pro'))
 }
 
 export async function tokensCommand(argv: string[]): Promise<void> {
@@ -52,7 +52,7 @@ export async function tokensCommand(argv: string[]): Promise<void> {
   const input = positionals.join(' ')
   if (!input) {
     printError('No text or file provided')
-    printMuted('Usage: gemini tokens "your text" or gemini tokens @file.txt')
+    printMuted('Usage: gcli tokens "your text" or gcli tokens @file.txt')
     process.exit(1)
   }
 

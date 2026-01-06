@@ -2,7 +2,7 @@
  * Research Command
  *
  * Deep research agent for comprehensive investigation.
- * gemini research "your research question"
+ * gcli research "your research question"
  */
 
 import { parseArgs } from 'node:util'
@@ -13,11 +13,11 @@ import { spinner, progress, print, printError, printSuccess, printMuted, printWa
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini research', 'Deep research agent'))
+  print(header('gcli research', 'Deep research agent'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini research ${theme.colors.muted('"your research question"')}`)
+  print(`  gcli research ${theme.colors.muted('"your research question"')}`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -27,9 +27,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini research "MCP ecosystem and best practices"'))
-  print(theme.colors.muted('  gemini research "AI coding assistants comparison" --format outline'))
-  print(theme.colors.muted('  gemini research "Bun vs Node.js performance" --wait'))
+  print(theme.colors.muted('  gcli research "MCP ecosystem and best practices"'))
+  print(theme.colors.muted('  gcli research "AI coding assistants comparison" --format outline'))
+  print(theme.colors.muted('  gcli research "Bun vs Node.js performance" --wait'))
   print('')
 
   print(theme.colors.warning(`${theme.symbols.warning} Deep research typically takes 5-20 minutes (max 60 min)`))
@@ -55,7 +55,7 @@ export async function researchCommand(argv: string[]): Promise<void> {
   const query = positionals.join(' ')
   if (!query) {
     printError('No research question provided')
-    printMuted('Usage: gemini research "your question"')
+    printMuted('Usage: gcli research "your question"')
     process.exit(1)
   }
 
@@ -101,7 +101,7 @@ export async function researchCommand(argv: string[]): Promise<void> {
       print(theme.colors.info(`${theme.symbols.info} Research is running in the background.`))
       print('')
       print('To check status:')
-      print(theme.colors.muted(`  gemini research-status ${result.id}`))
+      print(theme.colors.muted(`  gcli research-status ${result.id}`))
       print('')
       print(theme.colors.muted('Research typically takes 5-20 minutes (max 60 min).'))
       print(theme.colors.muted('Results will be saved to your configured output directory.'))
@@ -166,7 +166,7 @@ export async function researchCommand(argv: string[]): Promise<void> {
     // Timed out
     p.fail('Research timed out')
     printWarning('Research is still running. Check status later:')
-    print(theme.colors.muted(`  gemini research-status ${result.id}`))
+    print(theme.colors.muted(`  gcli research-status ${result.id}`))
 
   } catch (error) {
     s.error('Research failed')

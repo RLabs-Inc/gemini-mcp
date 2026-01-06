@@ -2,7 +2,7 @@
  * Search Command
  *
  * Real-time web search powered by Gemini + Google Search.
- * gemini search "your query"
+ * gcli search "your query"
  */
 
 import { parseArgs } from 'node:util'
@@ -36,11 +36,11 @@ interface GroundingMetadata {
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini search', 'Real-time web search'))
+  print(header('gcli search', 'Real-time web search'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini search ${theme.colors.muted('"your query"')}`)
+  print(`  gcli search ${theme.colors.muted('"your query"')}`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -49,9 +49,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini search "latest news about AI"'))
-  print(theme.colors.muted('  gemini search "weather in São Paulo"'))
-  print(theme.colors.muted('  gemini search "MCP Model Context Protocol"'))
+  print(theme.colors.muted('  gcli search "latest news about AI"'))
+  print(theme.colors.muted('  gcli search "weather in São Paulo"'))
+  print(theme.colors.muted('  gcli search "MCP Model Context Protocol"'))
 }
 
 /**
@@ -118,7 +118,7 @@ export async function searchCommand(argv: string[]): Promise<void> {
   const query = positionals.join(' ')
   if (!query) {
     printError('No search query provided')
-    printMuted('Usage: gemini search "your query"')
+    printMuted('Usage: gcli search "your query"')
     process.exit(1)
   }
 

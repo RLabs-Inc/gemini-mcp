@@ -5,7 +5,7 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 
-## What's New in v0.7.0
+## What's New in v0.7.1
 
 **Beautiful CLI with Themes!** Use Gemini directly from your terminal:
 
@@ -14,26 +14,26 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 npm install -g @rlabs-inc/gemini-mcp
 
 # Set your API key once
-gemini config set api-key YOUR_KEY
+gcli config set api-key YOUR_KEY
 
 # Generate images, videos, search, research, and more!
-gemini image "a cat astronaut" --size 4K
-gemini search "latest AI news"
-gemini research "quantum computing applications" --wait
-gemini speak "Hello world" --voice Puck
+gcli image "a cat astronaut" --size 4K
+gcli search "latest AI news"
+gcli research "quantum computing applications" --wait
+gcli speak "Hello world" --voice Puck
 ```
 
 **5 Beautiful Themes:** terminal, neon, ocean, forest, minimal
 
 **CLI Commands:**
-- `gemini query` - Direct Gemini queries with thinking levels
-- `gemini search` - Real-time web search with citations
-- `gemini research` - Deep research agent
-- `gemini image` - Generate images (up to 4K)
-- `gemini video` - Generate videos with Veo
-- `gemini speak` - Text-to-speech with 30 voices
-- `gemini tokens` - Count tokens and estimate costs
-- `gemini config` - Manage settings
+- `gcli query` - Direct Gemini queries with thinking levels
+- `gcli search` - Real-time web search with citations
+- `gcli research` - Deep research agent
+- `gcli image` - Generate images (up to 4K)
+- `gcli video` - Generate videos with Veo
+- `gcli speak` - Text-to-speech with 30 voices
+- `gcli tokens` - Count tokens and estimate costs
+- `gcli config` - Manage settings
 
 **MCP Registry Support:** Now discoverable in the official MCP ecosystem!
 
@@ -92,11 +92,11 @@ claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY bunx @rlabs-inc/gem
 npm install -g @rlabs-inc/gemini-mcp
 
 # Set your API key once (stored securely)
-gemini config set api-key YOUR_KEY
+gcli config set api-key YOUR_KEY
 
 # Now use any command!
-gemini search "latest news"
-gemini image "sunset over mountains" --ratio 16:9
+gcli search "latest news"
+glci image "sunset over mountains" --ratio 16:9
 ```
 
 **Get your API key:** Visit [Google AI Studio](https://aistudio.google.com/apikey) - it's free and takes seconds!

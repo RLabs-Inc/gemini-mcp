@@ -2,7 +2,7 @@
  * Query Command
  *
  * Direct queries to Gemini with thinking level control.
- * gemini query "your prompt" [--thinking high]
+ * gcli query "your prompt" [--thinking high]
  */
 
 import { parseArgs } from 'node:util'
@@ -19,11 +19,11 @@ interface QueryOptions {
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini query', 'Query Gemini directly'))
+  print(header('gcli query', 'Query Gemini directly'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini query ${theme.colors.muted('"your prompt"')} [options]`)
+  print(`  gcli query ${theme.colors.muted('"your prompt"')} [options]`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -33,9 +33,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini query "What is the meaning of life?"'))
-  print(theme.colors.muted('  gemini query "Explain quantum computing" --thinking high'))
-  print(theme.colors.muted('  gemini query "Quick fact check" -t minimal -m flash'))
+  print(theme.colors.muted('  gcli query "What is the meaning of life?"'))
+  print(theme.colors.muted('  gcli query "Explain quantum computing" --thinking high'))
+  print(theme.colors.muted('  gcli query "Quick fact check" -t minimal -m flash'))
 }
 
 export async function queryCommand(argv: string[]): Promise<void> {
@@ -58,7 +58,7 @@ export async function queryCommand(argv: string[]): Promise<void> {
   const prompt = positionals.join(' ')
   if (!prompt) {
     printError('No prompt provided')
-    printMuted('Usage: gemini query "your prompt"')
+    printMuted('Usage: gcli query "your prompt"')
     process.exit(1)
   }
 

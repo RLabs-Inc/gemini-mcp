@@ -2,7 +2,7 @@
  * Speak Command
  *
  * Text-to-speech with multiple voices.
- * gemini speak "your text" --voice Kore
+ * gcli speak "your text" --voice Kore
  */
 
 import { parseArgs } from 'node:util'
@@ -24,11 +24,11 @@ const VOICES = [
 function showHelp(): void {
   const theme = t()
 
-  print(header('gemini speak', 'Text-to-speech'))
+  print(header('gcli speak', 'Text-to-speech'))
   print('')
 
   print(theme.colors.primary('Usage:'))
-  print(`  gemini speak ${theme.colors.muted('"your text"')} [options]`)
+  print(`  gcli speak ${theme.colors.muted('"your text"')} [options]`)
   print('')
 
   print(theme.colors.primary('Options:'))
@@ -48,10 +48,10 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Examples:'))
-  print(theme.colors.muted('  gemini speak "Hello world!" --voice Puck'))
-  print(theme.colors.muted('  gemini speak "Important message" -v Kore -o message.mp3'))
-  print(theme.colors.muted('  gemini speak "Exciting news!" --style "enthusiastically"'))
-  print(theme.colors.muted('  gemini speak --list-voices'))
+  print(theme.colors.muted('  gcli speak "Hello world!" --voice Puck'))
+  print(theme.colors.muted('  gcli speak "Important message" -v Kore -o message.mp3'))
+  print(theme.colors.muted('  gcli speak "Exciting news!" --style "enthusiastically"'))
+  print(theme.colors.muted('  gcli speak --list-voices'))
 }
 
 function listVoices(): void {
@@ -105,7 +105,7 @@ export async function speakCommand(argv: string[]): Promise<void> {
   const text = positionals.join(' ')
   if (!text) {
     printError('No text provided')
-    printMuted('Usage: gemini speak "your text"')
+    printMuted('Usage: gcli speak "your text"')
     process.exit(1)
   }
 
@@ -117,7 +117,7 @@ export async function speakCommand(argv: string[]): Promise<void> {
   // Validate voice
   if (!VOICES.includes(voice)) {
     printError(`Unknown voice: ${voice}`)
-    printMuted(`Run 'gemini speak --list-voices' to see available voices`)
+    printMuted(`Run 'gcli speak --list-voices' to see available voices`)
     process.exit(1)
   }
 
