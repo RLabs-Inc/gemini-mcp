@@ -27,6 +27,7 @@ import { registerCacheTool } from './tools/cache.js'
 import { registerSpeechTool } from './tools/speech.js'
 import { registerTokenCountTool } from './tools/token-count.js'
 import { registerDeepResearchTool } from './tools/deep-research.js'
+import { registerImageAnalyzeTool } from './tools/image-analyze.js'
 
 // Import Gemini client and logger
 import { initGeminiClient } from './gemini-client.js'
@@ -148,6 +149,7 @@ For CLI mode, run: gemini --help
     registerSpeechTool(server)
     registerTokenCountTool(server)
     registerDeepResearchTool(server)
+    registerImageAnalyzeTool(server)
 
     // Start server with stdio transport
     const transport = new StdioServerTransport()
