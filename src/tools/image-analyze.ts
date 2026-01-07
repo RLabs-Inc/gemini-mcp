@@ -123,6 +123,13 @@ export function registerImageAnalyzeTool(server: McpServer): void {
         .enum(["pro", "flash"])
         .default("flash")
         .describe("Model to use: pro (more accurate) or flash (faster). Default: flash"),
+      thinkingLevel: z
+        .enum(["minimal", "low", "medium", "high"])
+        .optional()
+        .describe(
+          "Reasoning depth: minimal/low for fast responses, medium/high for complex analysis. " +
+          "Pro supports low/high only. Flash supports all levels. Default: high"
+        ),
       mediaResolution: z
         .enum(["low", "medium", "high"])
         .default("medium")
@@ -130,7 +137,7 @@ export function registerImageAnalyzeTool(server: McpServer): void {
           "Resolution for processing: low (faster), medium (balanced), high (more detail). Default: medium",
         ),
     },
-    async ({ imagePath, query, detectObjects, model, mediaResolution }) => {
+    async ({ imagePath, query, detectObjects, model, thinkingLevel, mediaResolution }) => {
       logger.info(`Analyzing image: ${imagePath}`);
 
       try {
@@ -210,6 +217,16 @@ If you cannot detect specific objects or bounding boxes are not applicable, retu
             config.mediaResolution = resolutionMap[mediaResolution];
           }
 
+          // Add thinking config for Gemini 3
+          if (thinkingLevel) {
+            // Pro only supports low/high, Flash supports all levels
+            const effectiveLevel = model === "pro"
+              ? (thinkingLevel === "minimal" || thinkingLevel === "low" ? "low" : "high")
+              : thinkingLevel;
+            config.thinkingConfig = { thinkingLevel: effectiveLevel };
+            logger.debug(`Using thinking level: ${effectiveLevel}${model === "pro" && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ""}`);
+          }
+
           // Add structured output for object detection
           if (detectObjects) {
             config.responseMimeType = "application/json";
@@ -266,6 +283,16 @@ If you cannot detect specific objects or bounding boxes are not applicable, retu
           const inlineConfig: Record<string, unknown> = {};
           if (mediaResolution !== "medium") {
             inlineConfig.mediaResolution = resolutionMap[mediaResolution];
+          }
+
+          // Add thinking config for Gemini 3
+          if (thinkingLevel) {
+            // Pro only supports low/high, Flash supports all levels
+            const effectiveLevel = model === "pro"
+              ? (thinkingLevel === "minimal" || thinkingLevel === "low" ? "low" : "high")
+              : thinkingLevel;
+            inlineConfig.thinkingConfig = { thinkingLevel: effectiveLevel };
+            logger.debug(`Using thinking level: ${effectiveLevel}${model === "pro" && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ""}`);
           }
 
           // Add structured output for object detection

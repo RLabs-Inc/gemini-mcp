@@ -6,7 +6,7 @@ This document provides essential information for Claude when working with this G
 
 This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
 
-**Version:** 0.7.0
+**Version:** 0.8.0
 **Package:** @rlabs-inc/gemini-mcp
 **MCP Registry:** io.github.rlabs-inc/gemini-mcp
 
@@ -96,6 +96,14 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
     - Note: Research typically takes 5-20 minutes, max 60 minutes
     - Full response saved to `GEMINI_OUTPUT_DIR` as JSON
 
+18. **Image Analysis** (`image-analyze.ts`): *Community contribution by @acreeger*
+    - `gemini-analyze-image`: Analyze images with object detection and bounding boxes
+      - Supports JPEG, PNG, WebP, HEIC, HEIF, GIF
+      - Returns `box_2d` (normalized 0-1000) and `bbox_pixels` (pixel coordinates)
+      - Structured JSON output with object labels and confidence
+      - Thinking level support for complex analysis
+      - Handles large files (>20MB) via Files API automatically
+
 ## Environment Variables
 
 | Variable | Required | Default | Description |
@@ -168,13 +176,15 @@ bun run lint       # Lint code with ESLint
 - Required for multi-turn image editing
 - Preserved in conversation history for function calling
 
-## Key Changes in v0.6.3
+## Key Changes in v0.8.0
 
-- **Deep Research Agent**: Autonomous multi-step research with web search
-- **Token Counting**: Count tokens and estimate costs before API calls
-- **Full 30+ tools**: All major Gemini 3 capabilities now available
+- **Image Analysis Tool**: New `gemini-analyze-image` with object detection and bounding boxes (community contribution by @acreeger)
+- **Thinking Level Support**: Added thinkingLevel parameter to image analysis for complex visual reasoning
+- **Dual Coordinate Output**: Returns both normalized (box_2d) and pixel (bbox_pixels) coordinates
 
 ### Previous Versions
+- v0.7.x: Published to MCP Registry, CLI renamed to gcli
+- v0.6.3: Deep Research Agent, Token Counting
 - v0.6.0: TTS with 30 voices, context caching, URL analysis
 - v0.5.0: Code execution, Google Search, YouTube analysis, document analysis
 - v0.3.0: Gemini 3 models, thinking levels, 4K image gen, multi-turn editing
