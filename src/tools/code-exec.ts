@@ -15,15 +15,9 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { GoogleGenAI } from '@google/genai'
 import { logger } from '../utils/logger.js'
+import { ensureOutputDir } from '../utils/output-dir.js'
 import * as fs from 'fs'
 import * as path from 'path'
-
-// Get output directory for generated files (charts, etc.)
-function getOutputDir(): string {
-  return (
-    process.env.GEMINI_OUTPUT_DIR || path.join(process.cwd(), 'gemini-output')
-  )
-}
 
 // Interface for code execution result parts
 interface CodeExecutionPart {
@@ -131,10 +125,7 @@ export function registerCodeExecTool(server: McpServer): void {
             })
 
             // Save the image to disk
-            const outputDir = getOutputDir()
-            if (!fs.existsSync(outputDir)) {
-              fs.mkdirSync(outputDir, { recursive: true })
-            }
+            const outputDir = ensureOutputDir()
             const timestamp = Date.now()
             const ext = part.inlineData.mimeType.split('/')[1] || 'png'
             const filename = `chart-${timestamp}.${ext}`
