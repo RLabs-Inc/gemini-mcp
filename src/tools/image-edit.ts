@@ -14,6 +14,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { GoogleGenAI, Modality } from '@google/genai'
 import { logger } from '../utils/logger.js'
+import { ensureOutputDir } from '../utils/output-dir.js'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -28,19 +29,9 @@ const activeEditSessions = new Map<
   }
 >()
 
-// Get output directory
-function getOutputDir(): string {
-  return (
-    process.env.GEMINI_OUTPUT_DIR || path.join(process.cwd(), 'gemini-output')
-  )
-}
-
 // Save image to disk
 function saveImage(base64: string, mimeType: string): string {
-  const outputDir = getOutputDir()
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true })
-  }
+  const outputDir = ensureOutputDir()
 
   const timestamp = Date.now()
   const extension = mimeType.split('/')[1] || 'png'
