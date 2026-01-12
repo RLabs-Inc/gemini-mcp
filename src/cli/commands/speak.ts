@@ -8,7 +8,7 @@
 import { parseArgs } from 'node:util'
 import { GoogleGenAI, Modality } from '@google/genai'
 import { setupLogger } from '../../utils/logger.js'
-import { getOutputDir } from '../../gemini-client.js'
+import { ensureOutputDir } from '../../utils/output-dir.js'
 import { spinner, print, printError, printSuccess, printMuted, t, header, box } from '../ui/index.js'
 import { join } from 'node:path'
 
@@ -169,7 +169,7 @@ export async function speakCommand(argv: string[]): Promise<void> {
 
     // Determine output path
     const outputPath = values.output as string ||
-      join(getOutputDir(), `speech-${Date.now()}.mp3`)
+      join(ensureOutputDir(), `speech-${Date.now()}.mp3`)
 
     // Save audio file
     const audioBuffer = Buffer.from(part.inlineData.data, 'base64')

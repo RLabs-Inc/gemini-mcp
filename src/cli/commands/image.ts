@@ -6,10 +6,9 @@
  */
 
 import { parseArgs } from 'node:util'
-import { initGeminiClient, generateImage, getOutputDir } from '../../gemini-client.js'
+import { initGeminiClient, generateImage } from '../../gemini-client.js'
 import { setupLogger } from '../../utils/logger.js'
 import { spinner, print, printError, printSuccess, printMuted, t, header, box } from '../ui/index.js'
-import { join } from 'node:path'
 
 // Valid options
 const VALID_SIZES = ['1K', '2K', '4K']
