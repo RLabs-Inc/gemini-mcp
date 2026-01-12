@@ -12,6 +12,7 @@
 
 import { GoogleGenAI, Modality } from '@google/genai'
 import { logger } from './utils/logger.js'
+import { ensureOutputDir } from './utils/output-dir.js'
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -81,12 +82,9 @@ export async function initGeminiClient(): Promise<void> {
     imageModelName = process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview'
     videoModelName = process.env.GEMINI_VIDEO_MODEL || 'veo-2.0-generate-001'
 
-    // Set up output directory for generated files
-    outputDir = process.env.GEMINI_OUTPUT_DIR || path.join(process.cwd(), 'gemini-output')
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true })
-      logger.info(`Created output directory: ${outputDir}`)
-    }
+    // Set up output directory for generated files (platform-appropriate location)
+    outputDir = ensureOutputDir()
+    logger.info(`Output directory: ${outputDir}`)
 
     // Use the user's preferred model for init test, fallback to flash (higher free tier limits)
     // This fixes issue #7 - init test was always using pro model causing 429 errors on free tier

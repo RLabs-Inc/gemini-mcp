@@ -15,15 +15,9 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { GoogleGenAI, Modality } from '@google/genai'
 import { logger } from '../utils/logger.js'
+import { ensureOutputDir } from '../utils/output-dir.js'
 import * as fs from 'fs'
 import * as path from 'path'
-
-// Get output directory for generated files
-function getOutputDir(): string {
-  return (
-    process.env.GEMINI_OUTPUT_DIR || path.join(process.cwd(), 'gemini-output')
-  )
-}
 
 // Save PCM audio as WAV file
 function saveWavFile(
@@ -33,11 +27,7 @@ function saveWavFile(
   sampleRate = 24000,
   bitsPerSample = 16
 ): string {
-  const outputDir = getOutputDir()
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true })
-  }
-
+  const outputDir = ensureOutputDir()
   const filePath = path.join(outputDir, filename)
 
   // Create WAV header
