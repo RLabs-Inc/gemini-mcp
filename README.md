@@ -5,47 +5,8 @@ A Model Context Protocol (MCP) server for integrating Google's Gemini 3 models w
 [![npm version](https://badge.fury.io/js/@rlabs-inc%2Fgemini-mcp.svg)](https://www.npmjs.com/package/@rlabs-inc/gemini-mcp)
 [![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io)
 
-## What's New in v0.7.2
-
-**Beautiful CLI with Themes!** Use Gemini directly from your terminal:
-
-```bash
-# Install globally
-npm install -g @rlabs-inc/gemini-mcp
-
-# Set your API key once
-gcli config set api-key YOUR_KEY
-
-# Generate images, videos, search, research, and more!
-gcli image "a cat astronaut" --size 4K
-gcli search "latest AI news"
-gcli research "quantum computing applications" --wait
-gcli speak "Hello world" --voice Puck
-```
-
-**5 Beautiful Themes:** terminal, neon, ocean, forest, minimal
-
-**CLI Commands:**
-- `gcli query` - Direct Gemini queries with thinking levels
-- `gcli search` - Real-time web search with citations
-- `gcli research` - Deep research agent
-- `gcli image` - Generate images (up to 4K)
-- `gcli video` - Generate videos with Veo
-- `gcli speak` - Text-to-speech with 30 voices
-- `gcli tokens` - Count tokens and estimate costs
-- `gcli config` - Manage settings
 
 **MCP Registry Support:** Now discoverable in the official MCP ecosystem!
-
-### Previous Versions
-
-**v0.6.x:** Deep Research, Token Counting, TTS, URL analysis, Context Caching
-**v0.5.x:** 30+ tools, YouTube analysis, Document analysis
-**v0.4.x:** Code execution, Google Search
-**v0.3.x:** Thinking levels, Structured output, 4K images
-**v0.2.x:** Image/Video generation with Veo
-
----
 
 ## Features
 
@@ -415,6 +376,46 @@ If you're hitting rate limits on the free tier:
 - For 4K images, generation takes longer
 
 ---
+
+### Previous Versions
+**0.7.2**
+
+**Beautiful CLI with Themes!** Use Gemini directly from your terminal:
+
+```bash
+# Install globally
+npm install -g @rlabs-inc/gemini-mcp
+
+# Set your API key once
+gcli config set api-key YOUR_KEY
+
+# Generate images, videos, search, research, and more!
+gcli image "a cat astronaut" --size 4K
+gcli search "latest AI news"
+gcli research "quantum computing applications" --wait
+gcli speak "Hello world" --voice Puck
+```
+
+**5 Beautiful Themes:** terminal, neon, ocean, forest, minimal
+
+**CLI Commands:**
+- `gcli query` - Direct Gemini queries with thinking levels
+- `gcli search` - Real-time web search with citations
+- `gcli research` - Deep research agent
+- `gcli image` - Generate images (up to 4K)
+- `gcli video` - Generate videos with Veo
+- `gcli speak` - Text-to-speech with 30 voices
+- `gcli tokens` - Count tokens and estimate costs
+- `gcli config` - Manage settings
+
+**v0.6.x:** Deep Research, Token Counting, TTS, URL analysis, Context Caching
+**v0.5.x:** 30+ tools, YouTube analysis, Document analysis
+**v0.4.x:** Code execution, Google Search
+**v0.3.x:** Thinking levels, Structured output, 4K images
+**v0.2.x:** Image/Video generation with Veo
+
+---
+
 
 ## Development
 
