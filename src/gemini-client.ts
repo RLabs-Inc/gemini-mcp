@@ -86,11 +86,8 @@ export async function initGeminiClient(): Promise<void> {
     outputDir = ensureOutputDir()
     logger.info(`Output directory: ${outputDir}`)
 
-    // Use the user's preferred model for init test, fallback to flash (higher free tier limits)
-    // This fixes issue #7 - init test was always using pro model causing 429 errors on free tier
-    const initModel = process.env.GEMINI_MODEL || flashModelName
-
-    // Test connection with timeout and retry
+    // Test connection using models.get() - this is a quota-free metadata endpoint
+    // that validates the API key without consuming generation quota
     let connected = false
     let attempts = 0
     const maxAttempts = 3
@@ -99,7 +96,7 @@ export async function initGeminiClient(): Promise<void> {
       try {
         attempts++
         logger.info(
-          `Connecting to Gemini API (attempt ${attempts}/${maxAttempts}) using ${initModel}...`
+          `Connecting to Gemini API (attempt ${attempts}/${maxAttempts})...`
         )
 
         // Set up a timeout for the connection test
@@ -107,11 +104,9 @@ export async function initGeminiClient(): Promise<void> {
           setTimeout(() => reject(new Error('Connection timeout')), 10000)
         })
 
-        // Test connection with user's preferred model or flash (better free tier limits)
-        const connectionPromise = genAI.models.generateContent({
-          model: initModel,
-          contents: 'Test connection',
-        })
+        // Use models.get() to validate API key - this doesn't consume generation quota
+        // Unlike generateContent(), this endpoint only retrieves model metadata
+        const connectionPromise = genAI.models.get({ model: flashModelName })
         const result = await Promise.race([connectionPromise, timeoutPromise])
 
         if (!result) {
