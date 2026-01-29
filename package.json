@@ -14,13 +14,14 @@
     "url": "https://github.com/RLabs-Inc/gemini-mcp.git"
   },
   "scripts": {
-    "build": "bun run tsc && chmod 755 dist/index.js",
-    "start": "bun dist/index.js",
+    "build": "tsc && chmod 755 dist/index.js",
+    "build:bun": "bun run tsc && chmod 755 dist/index.js",
+    "start": "node dist/index.js",
     "dev": "bun --watch src/index.ts",
-    "prepare": "bun run build",
+    "prepare": "npm run build",
     "format": "bunx prettier --write .",
     "lint": "bunx eslint \"**/*.{js,ts}\" --fix",
-    "typecheck": "bun run tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "mcp",

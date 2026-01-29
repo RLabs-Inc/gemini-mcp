@@ -21,6 +21,7 @@ import { registerCodeExecTool } from './tools/code-exec.js'
 import { registerSearchTool } from './tools/search.js'
 import { registerStructuredTool } from './tools/structured.js'
 import { registerYouTubeTool } from './tools/youtube.js'
+import { registerVideoUploadTool } from './tools/video-upload.js'
 import { registerDocumentTool } from './tools/document.js'
 import { registerUrlContextTool } from './tools/url-context.js'
 import { registerCacheTool } from './tools/cache.js'
@@ -143,6 +144,7 @@ For CLI mode, run: gemini --help
     registerSearchTool(server)
     registerStructuredTool(server)
     registerYouTubeTool(server)
+    registerVideoUploadTool(server)
     registerDocumentTool(server)
     registerUrlContextTool(server)
     registerCacheTool(server)

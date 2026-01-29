@@ -6,7 +6,7 @@ This document provides essential information for Claude when working with this G
 
 This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
 
-**Version:** 0.8.0
+**Version:** 0.8.2
 **Package:** @rlabs-inc/gemini-mcp
 **MCP Registry:** io.github.rlabs-inc/gemini-mcp
 
@@ -65,38 +65,48 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
     - `gemini-youtube`: Analyze YouTube videos by URL with clipping
     - `gemini-youtube-summary`: Quick video summarization
 
-12. **Document Analysis** (`document.ts`):
+12. **Video Upload** (`video-upload.ts`):
+    - `gemini-analyze-video`: Analyze local video files and inline video data
+      - Supports local file paths and base64-encoded video content
+      - Automatic file size handling (inline for <20MB, Files API for ≥20MB)
+      - Video clipping support (startTime/endTime)
+      - Media resolution control (low/medium/high)
+      - Supported formats: MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V, MPG, MPEG, 3GP
+    - `gemini-summarize-video`: Quick video summarization for local files
+      - Multiple summary styles: brief, detailed, bullet-points, chapters
+
+13. **Document Analysis** (`document.ts`):
     - `gemini-analyze-document`: Analyze PDFs, DOCX, spreadsheets
     - `gemini-summarize-pdf`: Quick PDF summarization
     - `gemini-extract-tables`: Extract tables from documents
 
-13. **URL Context** (`url-context.ts`):
+14. **URL Context** (`url-context.ts`):
     - `gemini-analyze-url`: Analyze content from URLs
     - `gemini-compare-urls`: Compare content between two URLs
     - `gemini-extract-from-url`: Extract specific data types from URLs
 
-14. **Context Caching** (`cache.ts`):
+15. **Context Caching** (`cache.ts`):
     - `gemini-create-cache`: Cache large documents for repeated queries
     - `gemini-query-cache`: Query cached content
     - `gemini-list-caches`: List active caches
     - `gemini-delete-cache`: Delete a cache
 
-15. **Speech/TTS** (`speech.ts`):
+16. **Speech/TTS** (`speech.ts`):
     - `gemini-speak`: Text-to-speech with 30 voices
     - `gemini-dialogue`: Multi-speaker dialogue generation
     - `gemini-list-voices`: List available voices
 
-16. **Token Counting** (`token-count.ts`):
+17. **Token Counting** (`token-count.ts`):
     - `gemini-count-tokens`: Count tokens and estimate costs
 
-17. **Deep Research** (`deep-research.ts`):
+18. **Deep Research** (`deep-research.ts`):
     - `gemini-deep-research`: Start autonomous multi-step research (async)
     - `gemini-check-research`: Check research status and get results
     - `gemini-research-followup`: Ask follow-up questions on completed research
     - Note: Research typically takes 5-20 minutes, max 60 minutes
     - Full response saved to `GEMINI_OUTPUT_DIR` as JSON
 
-18. **Image Analysis** (`image-analyze.ts`): *Community contribution by @acreeger*
+19. **Image Analysis** (`image-analyze.ts`): *Community contribution by @acreeger*
     - `gemini-analyze-image`: Analyze images with object detection and bounding boxes
       - Supports JPEG, PNG, WebP, HEIC, HEIF, GIF
       - Returns `box_2d` (normalized 0-1000) and `bbox_pixels` (pixel coordinates)
@@ -176,13 +186,18 @@ bun run lint       # Lint code with ESLint
 - Required for multi-turn image editing
 - Preserved in conversation history for function calling
 
-## Key Changes in v0.8.0
+## Key Changes in v0.8.2
 
-- **Image Analysis Tool**: New `gemini-analyze-image` with object detection and bounding boxes (community contribution by @acreeger)
-- **Thinking Level Support**: Added thinkingLevel parameter to image analysis for complex visual reasoning
-- **Dual Coordinate Output**: Returns both normalized (box_2d) and pixel (bbox_pixels) coordinates
+- **Video Upload Support**: New tools for analyzing local video files and inline video data
+  - Added `gemini-analyze-video` for comprehensive video analysis
+  - Added `gemini-summarize-video` for quick video summarization
+  - Supports 11 video formats: MP4, MOV, AVI, MKV, WebM, FLV, WMV, M4V, MPG, MPEG, 3GP
+  - Automatic file size handling (inline data for <20MB, Files API for ≥20MB)
+  - Media resolution control and video clipping support
+  - Complements existing YouTube analysis tools (kept separate and unchanged)
 
 ### Previous Versions
+- v0.8.0: Image Analysis Tool with object detection, thinking level support, dual coordinate output
 - v0.7.x: Published to MCP Registry, CLI renamed to gcli
 - v0.6.3: Deep Research Agent, Token Counting
 - v0.6.0: TTS with 30 voices, context caching, URL analysis
