@@ -1,0 +1,3 @@
+#!/bin/sh
+# Run typecheck, lint, and format check before commit
+bun run typecheck && bun run lint && bun run format --check
