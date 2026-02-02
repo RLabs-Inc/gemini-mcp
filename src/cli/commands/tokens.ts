@@ -23,7 +23,9 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Options:'))
-  print(`  ${theme.colors.highlight('--model, -m')}  ${theme.colors.muted('Model for tokenization: pro, flash (default: flash)')}`)
+  print(
+    `  ${theme.colors.highlight('--model, -m')}  ${theme.colors.muted('Model for tokenization: pro, flash (default: flash)')}`
+  )
   print(`  ${theme.colors.highlight('--help, -h')}   ${theme.colors.muted('Show this help')}`)
   print('')
 
@@ -118,7 +120,6 @@ export async function tokensCommand(argv: string[]): Promise<void> {
 
     print(box(lines, { title: 'Token Count' }))
     print('')
-
   } catch (error) {
     s.error('Token count failed')
     printError(error instanceof Error ? error.message : String(error))

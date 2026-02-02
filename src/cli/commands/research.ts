@@ -8,7 +8,18 @@
 import { parseArgs } from 'node:util'
 import { initGeminiClient, startDeepResearch, checkDeepResearch } from '../../gemini-client.js'
 import { setupLogger } from '../../utils/logger.js'
-import { spinner, progress, print, printError, printSuccess, printMuted, printWarning, t, header, box } from '../ui/index.js'
+import {
+  spinner,
+  progress,
+  print,
+  printError,
+  printSuccess,
+  printMuted,
+  printWarning,
+  t,
+  header,
+  box,
+} from '../ui/index.js'
 
 function showHelp(): void {
   const theme = t()
@@ -21,8 +32,12 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Options:'))
-  print(`  ${theme.colors.highlight('--format, -f')}  ${theme.colors.muted('Output format: report, outline, brief (default: report)')}`)
-  print(`  ${theme.colors.highlight('--wait, -w')}    ${theme.colors.muted('Wait for completion (can take 5-60 mins)')}`)
+  print(
+    `  ${theme.colors.highlight('--format, -f')}  ${theme.colors.muted('Output format: report, outline, brief (default: report)')}`
+  )
+  print(
+    `  ${theme.colors.highlight('--wait, -w')}    ${theme.colors.muted('Wait for completion (can take 5-60 mins)')}`
+  )
   print(`  ${theme.colors.highlight('--help, -h')}    ${theme.colors.muted('Show this help')}`)
   print('')
 
@@ -116,13 +131,12 @@ export async function researchCommand(argv: string[]): Promise<void> {
     const p = progress({ total: 100, showEta: false })
     p.start('Researching')
 
-    let lastStatus = 'pending'
     let attempts = 0
     const maxAttempts = 180 // 30 seconds * 180 = 90 minutes max
     const pollInterval = 30000 // 30 seconds
 
     while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, pollInterval))
+      await new Promise((resolve) => setTimeout(resolve, pollInterval))
       attempts++
 
       // Update progress (fake progress since we don't know actual %)
@@ -155,8 +169,6 @@ export async function researchCommand(argv: string[]): Promise<void> {
           printError(status.error || 'Unknown error')
           process.exit(1)
         }
-
-        lastStatus = status.status
       } catch (error) {
         // Polling error - continue trying
         console.error('Polling error:', error)
@@ -167,7 +179,6 @@ export async function researchCommand(argv: string[]): Promise<void> {
     p.fail('Research timed out')
     printWarning('Research is still running. Check status later:')
     print(theme.colors.muted(`  gcli research-status ${result.id}`))
-
   } catch (error) {
     s.error('Research failed')
     printError(error instanceof Error ? error.message : String(error))

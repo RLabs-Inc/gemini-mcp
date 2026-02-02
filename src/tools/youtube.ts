@@ -51,20 +51,14 @@ export function registerYouTubeTool(server: McpServer): void {
   server.tool(
     'gemini-youtube',
     {
-      url: z
-        .string()
-        .describe('YouTube video URL (e.g., https://www.youtube.com/watch?v=...)'),
+      url: z.string().describe('YouTube video URL (e.g., https://www.youtube.com/watch?v=...)'),
       question: z
         .string()
-        .describe('Question about the video or task to perform (e.g., "Summarize this video", "What happens at 2:30?")'),
-      startTime: z
-        .string()
-        .optional()
-        .describe('Start time for analysis (e.g., "1m30s", "90", "1:30"). Optional.'),
-      endTime: z
-        .string()
-        .optional()
-        .describe('End time for analysis (e.g., "5m00s", "300", "5:00"). Optional.'),
+        .describe(
+          'Question about the video or task to perform (e.g., "Summarize this video", "What happens at 2:30?")'
+        ),
+      startTime: z.string().optional().describe('Start time for analysis (e.g., "1m30s", "90", "1:30"). Optional.'),
+      endTime: z.string().optional().describe('End time for analysis (e.g., "5m00s", "300", "5:00"). Optional.'),
     },
     async ({ url, question, startTime, endTime }) => {
       logger.info(`YouTube analysis: ${url.substring(0, 50)}...`)
@@ -139,8 +133,7 @@ export function registerYouTubeTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in YouTube analysis: ${errorMessage}`)
 
         return {
@@ -161,10 +154,7 @@ export function registerYouTubeTool(server: McpServer): void {
     'gemini-youtube-summary',
     {
       url: z.string().describe('YouTube video URL'),
-      style: z
-        .enum(['brief', 'detailed', 'bullet-points', 'chapters'])
-        .default('brief')
-        .describe('Summary style'),
+      style: z.enum(['brief', 'detailed', 'bullet-points', 'chapters']).default('brief').describe('Summary style'),
     },
     async ({ url, style }) => {
       logger.info(`YouTube summary: ${url.substring(0, 50)}...`)
@@ -193,12 +183,10 @@ export function registerYouTubeTool(server: McpServer): void {
               'Provide a detailed summary of this video, covering all main points and key takeaways. Include relevant timestamps for important moments.'
             break
           case 'bullet-points':
-            prompt =
-              'Summarize this video as a bullet-point list of key points and takeaways.'
+            prompt = 'Summarize this video as a bullet-point list of key points and takeaways.'
             break
           case 'chapters':
-            prompt =
-              'Create a chapter breakdown of this video with timestamps and descriptions for each section.'
+            prompt = 'Create a chapter breakdown of this video with timestamps and descriptions for each section.'
             break
           default:
             prompt = 'Summarize this video.'
@@ -235,8 +223,7 @@ export function registerYouTubeTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in YouTube summary: ${errorMessage}`)
 
         return {

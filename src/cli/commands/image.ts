@@ -28,8 +28,12 @@ function showHelp(): void {
   print(`  ${theme.colors.highlight('--size, -s')}     ${theme.colors.muted('Resolution: 1K, 2K, 4K (default: 2K)')}`)
   print(`  ${theme.colors.highlight('--ratio, -r')}    ${theme.colors.muted('Aspect ratio (default: 1:1)')}`)
   print(`  ${theme.colors.highlight('--output, -o')}   ${theme.colors.muted('Output file path')}`)
-  print(`  ${theme.colors.highlight('--style')}        ${theme.colors.muted('Art style (e.g., "watercolor", "cyberpunk")')}`)
-  print(`  ${theme.colors.highlight('--search')}       ${theme.colors.muted('Use Google Search for real-world accuracy')}`)
+  print(
+    `  ${theme.colors.highlight('--style')}        ${theme.colors.muted('Art style (e.g., "watercolor", "cyberpunk")')}`
+  )
+  print(
+    `  ${theme.colors.highlight('--search')}       ${theme.colors.muted('Use Google Search for real-world accuracy')}`
+  )
   print(`  ${theme.colors.highlight('--help, -h')}     ${theme.colors.muted('Show this help')}`)
   print('')
 
@@ -114,7 +118,7 @@ export async function imageCommand(argv: string[]): Promise<void> {
     // Generate image
     s.update('Generating image...')
     const result = await generateImage(fullPrompt, {
-      aspectRatio: ratio as any, // Type assertion for ratio string
+      aspectRatio: ratio as '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9',
       imageSize: size as '1K' | '2K' | '4K',
       useGoogleSearch: useSearch,
     })
@@ -149,7 +153,6 @@ export async function imageCommand(argv: string[]): Promise<void> {
     // Hint about opening
     print('')
     print(theme.colors.muted(`Open with: open "${result.filePath}"`))
-
   } catch (error) {
     s.error('Image generation failed')
     printError(error instanceof Error ? error.message : String(error))

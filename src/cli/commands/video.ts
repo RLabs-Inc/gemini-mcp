@@ -8,7 +8,18 @@
 import { parseArgs } from 'node:util'
 import { initGeminiClient, startVideoGeneration, checkVideoStatus } from '../../gemini-client.js'
 import { setupLogger } from '../../utils/logger.js'
-import { spinner, progress, print, printError, printSuccess, printMuted, printWarning, t, header, box } from '../ui/index.js'
+import {
+  spinner,
+  progress,
+  print,
+  printError,
+  printSuccess,
+  printMuted,
+  printWarning,
+  t,
+  header,
+  box,
+} from '../ui/index.js'
 
 function showHelp(): void {
   const theme = t()
@@ -21,9 +32,15 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Options:'))
-  print(`  ${theme.colors.highlight('--ratio, -r')}    ${theme.colors.muted('Aspect ratio: 16:9, 9:16 (default: 16:9)')}`)
-  print(`  ${theme.colors.highlight('--wait, -w')}     ${theme.colors.muted('Wait for completion (can take several minutes)')}`)
-  print(`  ${theme.colors.highlight('--negative')}     ${theme.colors.muted('Things to avoid (e.g., "text, watermarks")')}`)
+  print(
+    `  ${theme.colors.highlight('--ratio, -r')}    ${theme.colors.muted('Aspect ratio: 16:9, 9:16 (default: 16:9)')}`
+  )
+  print(
+    `  ${theme.colors.highlight('--wait, -w')}     ${theme.colors.muted('Wait for completion (can take several minutes)')}`
+  )
+  print(
+    `  ${theme.colors.highlight('--negative')}     ${theme.colors.muted('Things to avoid (e.g., "text, watermarks")')}`
+  )
   print(`  ${theme.colors.highlight('--help, -h')}     ${theme.colors.muted('Show this help')}`)
   print('')
 
@@ -131,7 +148,7 @@ export async function videoCommand(argv: string[]): Promise<void> {
     const pollInterval = 10000 // 10 seconds
 
     while (attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, pollInterval))
+      await new Promise((resolve) => setTimeout(resolve, pollInterval))
       attempts++
 
       // Update progress (fake progress)
@@ -168,7 +185,7 @@ export async function videoCommand(argv: string[]): Promise<void> {
           process.exit(1)
         }
         // Still processing, continue
-      } catch (error) {
+      } catch (_error) {
         // Polling error - continue trying
       }
     }
@@ -176,7 +193,6 @@ export async function videoCommand(argv: string[]): Promise<void> {
     // Timed out
     p.fail('Video generation timed out')
     printWarning('Video may still be generating.')
-
   } catch (error) {
     s.error('Video generation failed')
     printError(error instanceof Error ? error.message : String(error))

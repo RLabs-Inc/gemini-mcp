@@ -23,6 +23,7 @@ function getTerminalWidth(): number {
 
 // Strip ANSI codes for length calculation
 function stripAnsi(str: string): string {
+  // eslint-disable-next-line no-control-regex
   return str.replace(/\x1b\[[0-9;]*m/g, '')
 }
 
@@ -65,7 +66,7 @@ export function box(content: string | string[], options: BoxOptions = {}): strin
 
   // Calculate widths
   const termWidth = getTerminalWidth()
-  const maxLineWidth = Math.max(...lines.map(l => stripAnsi(l).length))
+  const maxLineWidth = Math.max(...lines.map((l) => stripAnsi(l).length))
   const titleWidth = title ? stripAnsi(title).length + 2 : 0 // +2 for spaces around title
 
   let innerWidth: number
@@ -87,9 +88,7 @@ export function box(content: string | string[], options: BoxOptions = {}): strin
     const leftBorder = horizontal.repeat(2)
     const rightBorderLen = innerWidth - 4 - stripAnsi(title).length
     const rightBorder = horizontal.repeat(Math.max(0, rightBorderLen))
-    result.push(
-      marginStr + borderColor(topLeft + leftBorder) + titleStr + borderColor(rightBorder + topRight)
-    )
+    result.push(marginStr + borderColor(topLeft + leftBorder) + titleStr + borderColor(rightBorder + topRight))
   } else {
     result.push(marginStr + borderColor(topLeft + horizontal.repeat(innerWidth) + topRight))
   }
@@ -97,9 +96,7 @@ export function box(content: string | string[], options: BoxOptions = {}): strin
   // Content lines with padding
   for (const line of lines) {
     const paddedLine = pad(line, innerWidth - padding * 2, align)
-    result.push(
-      marginStr + borderColor(vertical) + paddingStr + paddedLine + paddingStr + borderColor(vertical)
-    )
+    result.push(marginStr + borderColor(vertical) + paddingStr + paddedLine + paddingStr + borderColor(vertical))
   }
 
   // Bottom border

@@ -22,9 +22,7 @@ export function registerStructuredTool(server: McpServer): void {
   server.tool(
     'gemini-structured',
     {
-      prompt: z
-        .string()
-        .describe('The prompt or data to process'),
+      prompt: z.string().describe('The prompt or data to process'),
       schema: z
         .string()
         .describe(
@@ -97,8 +95,7 @@ export function registerStructuredTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in structured output: ${errorMessage}`)
 
         return {
@@ -150,11 +147,27 @@ export function registerStructuredTool(server: McpServer): void {
             schema = {
               type: 'object',
               properties: {
-                people: { type: 'array', items: { type: 'string' }, description: 'Names of people mentioned' },
-                organizations: { type: 'array', items: { type: 'string' }, description: 'Organizations mentioned' },
-                locations: { type: 'array', items: { type: 'string' }, description: 'Locations mentioned' },
+                people: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Names of people mentioned',
+                },
+                organizations: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Organizations mentioned',
+                },
+                locations: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Locations mentioned',
+                },
                 dates: { type: 'array', items: { type: 'string' }, description: 'Dates mentioned' },
-                amounts: { type: 'array', items: { type: 'string' }, description: 'Monetary amounts or quantities' },
+                amounts: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Monetary amounts or quantities',
+                },
               },
               required: ['people', 'organizations', 'locations', 'dates', 'amounts'],
             }
@@ -189,7 +202,11 @@ export function registerStructuredTool(server: McpServer): void {
                 title: { type: 'string', description: 'A brief title' },
                 summary: { type: 'string', description: 'A concise summary' },
                 keyPoints: { type: 'array', items: { type: 'string' }, description: 'Key points' },
-                topics: { type: 'array', items: { type: 'string' }, description: 'Main topics covered' },
+                topics: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Main topics covered',
+                },
               },
               required: ['title', 'summary', 'keyPoints', 'topics'],
             }
@@ -200,9 +217,21 @@ export function registerStructuredTool(server: McpServer): void {
             schema = {
               type: 'object',
               properties: {
-                keywords: { type: 'array', items: { type: 'string' }, description: 'Important keywords' },
-                phrases: { type: 'array', items: { type: 'string' }, description: 'Important phrases' },
-                categories: { type: 'array', items: { type: 'string' }, description: 'Topic categories' },
+                keywords: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Important keywords',
+                },
+                phrases: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Important phrases',
+                },
+                categories: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Topic categories',
+                },
               },
               required: ['keywords', 'phrases', 'categories'],
             }
@@ -213,24 +242,40 @@ export function registerStructuredTool(server: McpServer): void {
             schema = {
               type: 'object',
               properties: {
-                overallSentiment: { type: 'string', enum: ['positive', 'negative', 'neutral', 'mixed'] },
-                sentimentScore: { type: 'number', description: 'Score from -1 (negative) to 1 (positive)' },
-                emotions: { type: 'array', items: { type: 'string' }, description: 'Emotions detected' },
-                reasoning: { type: 'string', description: 'Brief explanation of the sentiment analysis' },
+                overallSentiment: {
+                  type: 'string',
+                  enum: ['positive', 'negative', 'neutral', 'mixed'],
+                },
+                sentimentScore: {
+                  type: 'number',
+                  description: 'Score from -1 (negative) to 1 (positive)',
+                },
+                emotions: {
+                  type: 'array',
+                  items: { type: 'string' },
+                  description: 'Emotions detected',
+                },
+                reasoning: {
+                  type: 'string',
+                  description: 'Brief explanation of the sentiment analysis',
+                },
               },
               required: ['overallSentiment', 'sentimentScore', 'emotions', 'reasoning'],
             }
             prompt = `Analyze the sentiment of the following text:\n\n${text}`
             break
 
-          case 'custom':
+          case 'custom': {
             if (!customFields) {
               throw new Error('customFields is required for custom extraction')
             }
             const fields = customFields.split(',').map((f) => f.trim())
             const properties: Record<string, { type: string; description: string }> = {}
             for (const field of fields) {
-              properties[field] = { type: 'string', description: `The ${field} extracted from the text` }
+              properties[field] = {
+                type: 'string',
+                description: `The ${field} extracted from the text`,
+              }
             }
             schema = {
               type: 'object',
@@ -239,6 +284,7 @@ export function registerStructuredTool(server: McpServer): void {
             }
             prompt = `Extract the following information from the text: ${customFields}\n\nText:\n${text}`
             break
+          }
 
           default:
             throw new Error(`Unknown extraction type: ${extractType}`)
@@ -269,8 +315,7 @@ export function registerStructuredTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in extraction: ${errorMessage}`)
 
         return {

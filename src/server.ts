@@ -172,9 +172,7 @@ For CLI mode, run: gemini --help
         reconnectAttempts++
         const delay = Math.min(1000 * Math.pow(1.5, reconnectAttempts - 1), 10000)
 
-        logger.info(
-          `Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts}) after ${delay}ms...`
-        )
+        logger.info(`Attempting to reconnect (${reconnectAttempts}/${maxReconnectAttempts}) after ${delay}ms...`)
 
         setTimeout(() => {
           try {
@@ -217,9 +215,7 @@ For CLI mode, run: gemini --help
       logger.debug(
         `Environment variables: API_KEY=${process.env.GEMINI_API_KEY ? 'SET' : 'NOT_SET'}, VERBOSE=${process.env.VERBOSE || 'not set'}`
       )
-      logger.debug(
-        `Process stdin/stdout state - isTTY: ${process.stdin.isTTY}, ${process.stdout.isTTY}`
-      )
+      logger.debug(`Process stdin/stdout state - isTTY: ${process.stdin.isTTY}, ${process.stdout.isTTY}`)
 
       await server.connect(transport)
       logger.info('MCP Gemini Server running')
