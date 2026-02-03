@@ -13,12 +13,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import {
-  generateImage,
-  getOutputDir,
-  type AspectRatio,
-  type ImageSize,
-} from '../gemini-client.js'
+import { generateImage, getOutputDir, type AspectRatio, type ImageSize } from '../gemini-client.js'
 import { logger } from '../utils/logger.js'
 
 /**
@@ -33,26 +28,11 @@ export function registerImageGenTool(server: McpServer): void {
       style: z
         .string()
         .optional()
-        .describe(
-          'Art style (e.g., "photorealistic", "watercolor", "anime", "oil painting", "cyberpunk")'
-        ),
+        .describe('Art style (e.g., "photorealistic", "watercolor", "anime", "oil painting", "cyberpunk")'),
       aspectRatio: z
-        .enum([
-          '1:1',
-          '2:3',
-          '3:2',
-          '3:4',
-          '4:3',
-          '4:5',
-          '5:4',
-          '9:16',
-          '16:9',
-          '21:9',
-        ])
+        .enum(['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9'])
         .default('1:1')
-        .describe(
-          'Aspect ratio: 1:1 (square), 16:9 (widescreen), 9:16 (portrait/mobile), 21:9 (ultrawide), etc.'
-        ),
+        .describe('Aspect ratio: 1:1 (square), 16:9 (widescreen), 9:16 (portrait/mobile), 21:9 (ultrawide), etc.'),
       imageSize: z
         .enum(['1K', '2K', '4K'])
         .default('2K')
@@ -77,10 +57,7 @@ export function registerImageGenTool(server: McpServer): void {
         })
 
         // Return the image in MCP format - Claude will be able to SEE this!
-        const content: Array<
-          | { type: 'text'; text: string }
-          | { type: 'image'; data: string; mimeType: string }
-        > = [
+        const content: Array<{ type: 'text'; text: string } | { type: 'image'; data: string; mimeType: string }> = [
           {
             type: 'image',
             data: result.base64,
@@ -94,8 +71,7 @@ export function registerImageGenTool(server: McpServer): void {
 
         return { content }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error generating image: ${errorMessage}`)
 
         return {
@@ -115,18 +91,10 @@ export function registerImageGenTool(server: McpServer): void {
   server.tool(
     'gemini-image-prompt',
     {
-      description: z
-        .string()
-        .describe('Description of the image to generate a prompt for'),
+      description: z.string().describe('Description of the image to generate a prompt for'),
       style: z.string().optional().describe('The artistic style for the image'),
-      mood: z
-        .string()
-        .optional()
-        .describe('The mood or atmosphere of the image'),
-      details: z
-        .string()
-        .optional()
-        .describe('Additional details to include'),
+      mood: z.string().optional().describe('The mood or atmosphere of the image'),
+      details: z.string().optional().describe('Additional details to include'),
     },
     async ({ description, style, mood, details }) => {
       logger.info(`Generating image prompt for: ${description}`)
@@ -164,8 +132,7 @@ Use detail-rich, vivid language that generative AI image models would respond we
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error generating image prompt: ${errorMessage}`)
 
         return {

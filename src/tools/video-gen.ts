@@ -7,11 +7,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import {
-  startVideoGeneration,
-  checkVideoStatus,
-  getOutputDir,
-} from '../gemini-client.js'
+import { startVideoGeneration, checkVideoStatus, getOutputDir } from '../gemini-client.js'
 import { logger } from '../utils/logger.js'
 
 /**
@@ -22,17 +18,12 @@ export function registerVideoGenTool(server: McpServer): void {
   server.tool(
     'gemini-generate-video',
     {
-      prompt: z
-        .string()
-        .describe('Description of the video to generate (be detailed!)'),
+      prompt: z.string().describe('Description of the video to generate (be detailed!)'),
       aspectRatio: z
         .enum(['16:9', '9:16'])
         .default('16:9')
         .describe('Aspect ratio (16:9 for landscape, 9:16 for portrait/mobile)'),
-      negativePrompt: z
-        .string()
-        .optional()
-        .describe('Things to avoid in the video (e.g., "text, watermarks, blurry")'),
+      negativePrompt: z.string().optional().describe('Things to avoid in the video (e.g., "text, watermarks, blurry")'),
     },
     async ({ prompt, aspectRatio, negativePrompt }) => {
       logger.info(`Starting video generation: ${prompt.substring(0, 50)}...`)
@@ -59,8 +50,7 @@ Video generation takes 1-5 minutes. Use the \`gemini-check-video\` tool with the
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error starting video generation: ${errorMessage}`)
 
         return {
@@ -80,9 +70,7 @@ Video generation takes 1-5 minutes. Use the \`gemini-check-video\` tool with the
   server.tool(
     'gemini-check-video',
     {
-      operationId: z
-        .string()
-        .describe('The operation ID returned when starting video generation'),
+      operationId: z.string().describe('The operation ID returned when starting video generation'),
     },
     async ({ operationId }) => {
       logger.info(`Checking video status: ${operationId}`)
@@ -137,8 +125,7 @@ Please check again in 30-60 seconds using the \`gemini-check-video\` tool.`,
           }
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error checking video status: ${errorMessage}`)
 
         return {

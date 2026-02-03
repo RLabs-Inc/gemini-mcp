@@ -17,7 +17,7 @@
     "build": "bun run tsc && chmod 755 dist/index.js",
     "start": "bun dist/index.js",
     "dev": "bun --watch src/index.ts",
-    "prepare": "bun run build",
+    "prepare": "husky",
     "format": "bunx prettier --write .",
     "lint": "bunx eslint \"**/*.{js,ts}\" --fix",
     "typecheck": "bun run tsc --noEmit"
@@ -42,11 +42,14 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@types/bun": "latest",
     "@types/node": "^20.10.5",
-    "eslint": "^8.56.0",
+    "eslint": "^9.0.0",
+    "husky": "^9.0.0",
     "prettier": "^3.1.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

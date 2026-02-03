@@ -7,7 +7,7 @@
  */
 
 import { parseArgs } from 'node:util'
-import { loadConfig, saveConfig, getConfigPath, getConfigDir } from '../config.js'
+import { loadConfig, saveConfig, getConfigPath } from '../config.js'
 import { print, printError, printSuccess, printMuted, printWarning, t, header, box } from '../ui/index.js'
 
 function showHelp(): void {
@@ -28,7 +28,9 @@ function showHelp(): void {
 
   print(theme.colors.primary('Settings:'))
   print(`  ${theme.colors.highlight('api-key')}         ${theme.colors.muted('Your Gemini API key')}`)
-  print(`  ${theme.colors.highlight('theme')}           ${theme.colors.muted('Default theme (terminal, neon, minimal, ocean, forest)')}`)
+  print(
+    `  ${theme.colors.highlight('theme')}           ${theme.colors.muted('Default theme (terminal, neon, minimal, ocean, forest)')}`
+  )
   print(`  ${theme.colors.highlight('output-dir')}      ${theme.colors.muted('Directory for generated files')}`)
   print(`  ${theme.colors.highlight('default-voice')}   ${theme.colors.muted('Default TTS voice')}`)
   print(`  ${theme.colors.highlight('default-model')}   ${theme.colors.muted('Default model (pro or flash)')}`)
@@ -75,14 +77,14 @@ async function setConfig(key: string, value: string): Promise<void> {
   // Map user-friendly keys to config keys
   const keyMap: Record<string, string> = {
     'api-key': 'apiKey',
-    'apikey': 'apiKey',
-    'theme': 'theme',
+    apikey: 'apiKey',
+    theme: 'theme',
     'output-dir': 'outputDir',
-    'outputdir': 'outputDir',
+    outputdir: 'outputDir',
     'default-voice': 'defaultVoice',
-    'voice': 'defaultVoice',
+    voice: 'defaultVoice',
     'default-model': 'defaultModel',
-    'model': 'defaultModel',
+    model: 'defaultModel',
     'image-size': 'defaultImageSize',
     'image-ratio': 'defaultImageRatio',
     'video-ratio': 'defaultVideoRatio',
@@ -155,7 +157,7 @@ export async function configCommand(argv: string[]): Promise<void> {
       print(getConfigPath())
       break
 
-    case 'set':
+    case 'set': {
       const key = positionals[1]
       const value = positionals.slice(2).join(' ')
 
@@ -167,6 +169,7 @@ export async function configCommand(argv: string[]): Promise<void> {
 
       await setConfig(key, value)
       break
+    }
 
     default:
       printError(`Unknown config command: ${subCommand}`)

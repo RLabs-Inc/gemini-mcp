@@ -35,17 +35,7 @@ export interface GenerateOptions {
 /**
  * All supported aspect ratios for Nano Banana Pro
  */
-export type AspectRatio =
-  | '1:1'
-  | '2:3'
-  | '3:2'
-  | '3:4'
-  | '4:3'
-  | '4:5'
-  | '5:4'
-  | '9:16'
-  | '16:9'
-  | '21:9'
+export type AspectRatio = '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9'
 
 /**
  * Image sizes for Nano Banana Pro (Gemini 3 Pro Image)
@@ -98,9 +88,7 @@ export async function initGeminiClient(): Promise<void> {
     while (!connected && attempts < maxAttempts) {
       try {
         attempts++
-        logger.info(
-          `Connecting to Gemini API (attempt ${attempts}/${maxAttempts}) using ${initModel}...`
-        )
+        logger.info(`Connecting to Gemini API (attempt ${attempts}/${maxAttempts}) using ${initModel}...`)
 
         // Set up a timeout for the connection test
         const timeoutPromise = new Promise((_, reject) => {
@@ -126,14 +114,11 @@ export async function initGeminiClient(): Promise<void> {
         logger.info(`Video model: ${videoModelName}`)
         logger.info(`Output directory: ${outputDir}`)
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.warn(`Connection attempt ${attempts} failed: ${errorMessage}`)
 
         if (attempts >= maxAttempts) {
-          throw new Error(
-            `Failed to connect to Gemini API after ${maxAttempts} attempts: ${errorMessage}`
-          )
+          throw new Error(`Failed to connect to Gemini API after ${maxAttempts} attempts: ${errorMessage}`)
         }
 
         // Wait before retry
@@ -155,10 +140,7 @@ export async function initGeminiClient(): Promise<void> {
  *
  * Gemini 3 Pro supports thinking levels: low, high (default)
  */
-export async function generateWithGeminiPro(
-  prompt: string,
-  options: GenerateOptions = {}
-): Promise<string> {
+export async function generateWithGeminiPro(prompt: string, options: GenerateOptions = {}): Promise<string> {
   try {
     logger.prompt(prompt)
 
@@ -169,8 +151,7 @@ export async function generateWithGeminiPro(
     const config: Record<string, unknown> = {}
     if (thinkingLevel) {
       // For Pro, only 'low' and 'high' are valid - map 'minimal' and 'medium' appropriately
-      const proThinkingLevel =
-        thinkingLevel === 'minimal' || thinkingLevel === 'low' ? 'low' : 'high'
+      const proThinkingLevel = thinkingLevel === 'minimal' || thinkingLevel === 'low' ? 'low' : 'high'
       config.thinkingConfig = { thinkingLevel: proThinkingLevel }
       logger.debug(`Using thinking level: ${proThinkingLevel} (requested: ${thinkingLevel})`)
     }
@@ -199,10 +180,7 @@ export async function generateWithGeminiPro(
  *
  * Gemini 3 Flash supports ALL thinking levels: minimal, low, medium, high (default)
  */
-export async function generateWithGeminiFlash(
-  prompt: string,
-  options: GenerateOptions = {}
-): Promise<string> {
+export async function generateWithGeminiFlash(prompt: string, options: GenerateOptions = {}): Promise<string> {
   try {
     logger.prompt(prompt)
 
@@ -247,10 +225,7 @@ export async function generateWithChat(
       parts: [{ text: msg.content }],
     }))
 
-    logger.debug(
-      'Starting chat with messages:',
-      JSON.stringify(messages, null, 2)
-    )
+    logger.debug('Starting chat with messages:', JSON.stringify(messages, null, 2))
 
     // Handle the conversation based on the last message
     const lastMessage = messages[messages.length - 1]
@@ -463,14 +438,12 @@ export async function startVideoGeneration(
 /**
  * Check the status of a video generation operation
  */
-export async function checkVideoStatus(
-  operationName: string
-): Promise<VideoGenerationResult> {
+export async function checkVideoStatus(operationName: string): Promise<VideoGenerationResult> {
   try {
     logger.debug(`Checking video status: ${operationName}`)
 
     // Get the stored operation object
-    let operation = activeVideoOperations.get(operationName)
+    const operation = activeVideoOperations.get(operationName)
 
     if (!operation) {
       return {
@@ -568,10 +541,7 @@ export interface TokenCountResult {
 /**
  * Count tokens for content using specified model
  */
-export async function countTokens(
-  content: string,
-  model: 'pro' | 'flash' = 'flash'
-): Promise<TokenCountResult> {
+export async function countTokens(content: string, model: 'pro' | 'flash' = 'flash'): Promise<TokenCountResult> {
   const modelName = model === 'pro' ? proModelName : flashModelName
 
   const result = await genAI.models.countTokens({
@@ -593,7 +563,7 @@ export interface DeepResearchResult {
   status: 'pending' | 'processing' | 'completed' | 'failed'
   outputs?: { text?: string }[]
   error?: string
-  savedPath?: string  // Path to full response JSON file
+  savedPath?: string // Path to full response JSON file
 }
 
 // Deep Research agent model
@@ -602,9 +572,7 @@ const DEEP_RESEARCH_AGENT = 'deep-research-pro-preview-12-2025'
 /**
  * Start a deep research task
  */
-export async function startDeepResearch(
-  prompt: string
-): Promise<DeepResearchResult> {
+export async function startDeepResearch(prompt: string): Promise<DeepResearchResult> {
   try {
     // The Interactions API is properly typed in @google/genai v1.34.0+
     const interaction = await genAI.interactions.create({
@@ -630,9 +598,7 @@ export async function startDeepResearch(
 /**
  * Check deep research status
  */
-export async function checkDeepResearch(
-  researchId: string
-): Promise<DeepResearchResult> {
+export async function checkDeepResearch(researchId: string): Promise<DeepResearchResult> {
   try {
     const interaction = await genAI.interactions.get(researchId)
 
@@ -657,7 +623,7 @@ export async function checkDeepResearch(
       // Extract text for the summary (but full data is saved)
       const textOutputs = (interaction.outputs || [])
         .filter((output) => 'type' in output && output.type === 'text')
-        .map(output => ({ text: (output as { text?: string }).text }))
+        .map((output) => ({ text: (output as { text?: string }).text }))
 
       return {
         id: researchId,
@@ -686,10 +652,7 @@ export async function checkDeepResearch(
 /**
  * Follow up on completed research
  */
-export async function followUpResearch(
-  researchId: string,
-  question: string
-): Promise<string> {
+export async function followUpResearch(researchId: string, question: string): Promise<string> {
   try {
     const interaction = await genAI.interactions.create({
       input: question,
@@ -701,7 +664,7 @@ export async function followUpResearch(
     const outputs = interaction.outputs || []
     const textOutputs = outputs
       .filter((output) => 'type' in output && output.type === 'text')
-      .map(output => (output as { text?: string }).text)
+      .map((output) => (output as { text?: string }).text)
       .filter((text): text is string => !!text)
 
     if (textOutputs.length > 0) {

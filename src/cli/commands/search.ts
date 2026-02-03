@@ -57,19 +57,13 @@ function showHelp(): void {
 /**
  * Add inline citations to text based on grounding metadata
  */
-function addCitations(
-  text: string,
-  supports: GroundingSupport[],
-  chunks: GroundingChunk[]
-): string {
+function addCitations(text: string, supports: GroundingSupport[], chunks: GroundingChunk[]): string {
   if (!supports || !chunks || supports.length === 0) {
     return text
   }
 
   // Sort supports by endIndex in descending order to avoid shifting issues
-  const sortedSupports = [...supports].sort(
-    (a, b) => (b.segment?.endIndex ?? 0) - (a.segment?.endIndex ?? 0)
-  )
+  const sortedSupports = [...supports].sort((a, b) => (b.segment?.endIndex ?? 0) - (a.segment?.endIndex ?? 0))
 
   let result = text
 
@@ -205,7 +199,6 @@ export async function searchCommand(argv: string[]): Promise<void> {
     }
 
     print('')
-
   } catch (error) {
     s.error('Search failed')
     printError(error instanceof Error ? error.message : String(error))

@@ -40,19 +40,13 @@ interface GroundingMetadata {
 /**
  * Add inline citations to text based on grounding metadata
  */
-function addCitations(
-  text: string,
-  supports: GroundingSupport[],
-  chunks: GroundingChunk[]
-): string {
+function addCitations(text: string, supports: GroundingSupport[], chunks: GroundingChunk[]): string {
   if (!supports || !chunks || supports.length === 0) {
     return text
   }
 
   // Sort supports by endIndex in descending order to avoid shifting issues
-  const sortedSupports = [...supports].sort(
-    (a, b) => (b.segment?.endIndex ?? 0) - (a.segment?.endIndex ?? 0)
-  )
+  const sortedSupports = [...supports].sort((a, b) => (b.segment?.endIndex ?? 0) - (a.segment?.endIndex ?? 0))
 
   let result = text
 
@@ -91,13 +85,8 @@ export function registerSearchTool(server: McpServer): void {
     {
       query: z
         .string()
-        .describe(
-          'The question or topic to search for. Gemini will use Google Search to find current information.'
-        ),
-      returnCitations: z
-        .boolean()
-        .default(true)
-        .describe('Include inline citations with source URLs'),
+        .describe('The question or topic to search for. Gemini will use Google Search to find current information.'),
+      returnCitations: z.boolean().default(true).describe('Include inline citations with source URLs'),
     },
     async ({ query, returnCitations }) => {
       logger.info(`Google Search query: ${query.substring(0, 50)}...`)
@@ -166,8 +155,7 @@ export function registerSearchTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in Google Search: ${errorMessage}`)
 
         return {

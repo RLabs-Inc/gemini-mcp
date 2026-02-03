@@ -10,12 +10,6 @@ import { initGeminiClient, generateWithGeminiPro, generateWithGeminiFlash } from
 import { setupLogger } from '../../utils/logger.js'
 import { spinner, print, printError, printMuted, t, header } from '../ui/index.js'
 
-interface QueryOptions {
-  prompt: string
-  thinking: 'minimal' | 'low' | 'medium' | 'high'
-  model: 'pro' | 'flash'
-}
-
 function showHelp(): void {
   const theme = t()
 
@@ -27,8 +21,12 @@ function showHelp(): void {
   print('')
 
   print(theme.colors.primary('Options:'))
-  print(`  ${theme.colors.highlight('--thinking, -t')}  ${theme.colors.muted('Thinking level: minimal, low, medium, high (default: high)')}`)
-  print(`  ${theme.colors.highlight('--model, -m')}     ${theme.colors.muted('Model to use: pro, flash (default: pro)')}`)
+  print(
+    `  ${theme.colors.highlight('--thinking, -t')}  ${theme.colors.muted('Thinking level: minimal, low, medium, high (default: high)')}`
+  )
+  print(
+    `  ${theme.colors.highlight('--model, -m')}     ${theme.colors.muted('Model to use: pro, flash (default: pro)')}`
+  )
   print(`  ${theme.colors.highlight('--help, -h')}      ${theme.colors.muted('Show this help')}`)
   print('')
 
@@ -94,12 +92,11 @@ export async function queryCommand(argv: string[]): Promise<void> {
     // Query Gemini based on model
     s.update(`Thinking (${thinking})...`)
     const options = {
-      thinkingLevel: thinking as 'minimal' | 'low' | 'medium' | 'high'
+      thinkingLevel: thinking as 'minimal' | 'low' | 'medium' | 'high',
     }
 
-    const result = model === 'flash'
-      ? await generateWithGeminiFlash(prompt, options)
-      : await generateWithGeminiPro(prompt, options)
+    const result =
+      model === 'flash' ? await generateWithGeminiFlash(prompt, options) : await generateWithGeminiPro(prompt, options)
 
     s.success('Response received')
     print('')
@@ -109,7 +106,6 @@ export async function queryCommand(argv: string[]): Promise<void> {
     print('')
     print(result)
     print('')
-
   } catch (error) {
     s.error('Query failed')
     printError(error instanceof Error ? error.message : String(error))

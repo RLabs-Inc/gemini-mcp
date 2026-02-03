@@ -24,10 +24,7 @@ const firstArg = args[0]
 // 2. Explicit 'serve' command
 // 3. Legacy flags that were for MCP server
 const mcpServerFlags = ['--verbose', '-v', '--quiet', '-q', '--help', '-h']
-const isMcpMode =
-  args.length === 0 ||
-  firstArg === 'serve' ||
-  (args.length === 1 && mcpServerFlags.includes(firstArg))
+const isMcpMode = args.length === 0 || firstArg === 'serve' || (args.length === 1 && mcpServerFlags.includes(firstArg))
 
 if (isMcpMode) {
   // Start MCP server (existing behavior)
