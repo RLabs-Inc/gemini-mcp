@@ -20,7 +20,9 @@
     "prepare": "(husky || true) && bun run build",
     "format": "bunx prettier --write .",
     "lint": "bunx eslint \"**/*.{js,ts}\" --fix",
-    "typecheck": "bun run tsc --noEmit"
+    "typecheck": "bun run tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "mcp",
@@ -44,12 +46,13 @@
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@types/bun": "latest",
-    "@types/node": "^20.10.5",
+    "@types/node": "^20.19.31",
     "eslint": "^9.0.0",
     "husky": "^9.0.0",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.0.18"
   },
   "engines": {
     "node": ">=18.0.0"
