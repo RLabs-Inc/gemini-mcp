@@ -17,7 +17,7 @@
     "build": "bun run tsc && chmod 755 dist/index.js",
     "start": "bun dist/index.js",
     "dev": "bun --watch src/index.ts",
-    "prepare": "husky",
+    "prepare": "(husky || true) && bun run build",
     "format": "bunx prettier --write .",
     "lint": "bunx eslint \"**/*.{js,ts}\" --fix",
     "typecheck": "bun run tsc --noEmit"
