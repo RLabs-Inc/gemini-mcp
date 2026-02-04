@@ -7,6 +7,22 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { generateWithGeminiPro } from '../gemini-client.js'
+import { normalizeFilePaths, readFilesForAnalysis, buildAnalysisPrompt } from './analyze-utils.js'
+
+// Re-export utilities for external use
+export {
+  normalizeFilePaths,
+  readFilesForAnalysis,
+  buildCodeSection,
+  buildAnalysisTarget,
+  getFocusInstructions,
+  buildAnalysisPrompt,
+  MAX_FILE_SIZE,
+  type FileContent,
+  type AnalysisFocus,
+  type CodeAnalysisInput,
+  type PromptBuildResult,
+} from './analyze-utils.js'
 
 /**
  * Register analysis tools with the MCP server
@@ -16,32 +32,27 @@ export function registerAnalyzeTool(server: McpServer): void {
   server.tool(
     'gemini-analyze-code',
     {
-      code: z.string().describe('The code to analyze'),
+      code: z.string().optional().describe('The code to analyze (inline)'),
+      filePath: z.string().optional().describe('Path to a single code file to analyze'),
+      filePaths: z.array(z.string()).optional().describe('Paths to multiple code files to analyze together'),
       language: z.string().optional().describe('The programming language of the code'),
       focus: z
         .enum(['quality', 'security', 'performance', 'bugs', 'general'])
         .default('general')
         .describe('What aspect to focus the analysis on'),
     },
-    async ({ code, language, focus }) => {
+    async ({ code, filePath, filePaths, language, focus }) => {
       console.log(`Analyzing code with focus on ${focus}`)
 
       try {
-        const langText = language ? `${language} code` : 'code'
-        const prompt = `
-Analyze the following ${langText} with a focus on ${focus}:
+        // Normalize file paths
+        const allPaths = normalizeFilePaths(filePath, filePaths)
 
-\`\`\`${language ? language : ''}
-${code}
-\`\`\`
+        // Read files
+        const fileContents = readFilesForAnalysis(allPaths)
 
-Please provide:
-${focus === 'quality' ? '1. Code quality assessment\n2. Style and readability review\n3. Maintainability considerations\n4. Suggested improvements' : ''}
-${focus === 'security' ? '1. Security vulnerabilities identification\n2. Potential exploit vectors\n3. Security best practices assessment\n4. Security improvements' : ''}
-${focus === 'performance' ? '1. Performance bottlenecks\n2. Optimization opportunities\n3. Algorithmic complexity analysis\n4. Performance improvement suggestions' : ''}
-${focus === 'bugs' ? "1. Bugs and logical errors\n2. Edge cases that aren't handled\n3. Potential runtime errors\n4. Bug fix suggestions" : ''}
-${focus === 'general' ? '1. Overall code assessment\n2. Strengths and weaknesses\n3. Potential issues (bugs, security, performance)\n4. Suggested improvements' : ''}
-`
+        // Build prompt
+        const { prompt } = buildAnalysisPrompt(fileContents, code, language, focus)
 
         const response = await generateWithGeminiPro(prompt)
 
