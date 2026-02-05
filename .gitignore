@@ -1,5 +1,8 @@
 # Node.js
 node_modules/
+
+# Bun binary lockfile (use text-based bun.lock instead)
+bun.lockb
 npm-debug.log
 yarn-error.log
 yarn-debug.log

@@ -10,6 +10,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { parseArgs } from 'node:util'
 
 // Import tools
+import { getEnabledToolGroups, TOOL_GROUPS } from './tools/tool-groups.js'
 import { registerQueryTool } from './tools/query.js'
 import { registerBrainstormTool } from './tools/brainstorm.js'
 import { registerAnalyzeTool } from './tools/analyze.js'
@@ -78,6 +79,8 @@ Environment Variables:
   GEMINI_MODEL     (optional) Default Gemini model to use
   GEMINI_PRO_MODEL (optional) Specify Pro model variant
   GEMINI_FLASH_MODEL (optional) Specify Flash model variant
+  GEMINI_ENABLED_TOOLS (optional) Comma-separated list of tool groups to load
+  GEMINI_TOOL_PRESET   (optional) Preset profile: minimal, text, image, research, media, full
 
 For CLI mode, run: gemini --help
   `)
@@ -109,6 +112,11 @@ For CLI mode, run: gemini --help
   - GEMINI_PRO_MODEL: ${process.env.GEMINI_PRO_MODEL || '(not set, using default)'}
   - GEMINI_FLASH_MODEL: ${process.env.GEMINI_FLASH_MODEL || '(not set, using default)'}`)
 
+  // Log tool configuration
+  const enabledGroups = getEnabledToolGroups()
+  logger.debug(`Tool configuration: ${enabledGroups.size} of ${Object.keys(TOOL_GROUPS).length} groups enabled`)
+  logger.info(`Loading ${enabledGroups.size} tool groups`)
+
   logger.info(`Starting MCP Gemini Server with model: ${geminiModel}`)
   logger.info(`Logging mode: ${logLevel}`)
 
@@ -131,25 +139,34 @@ For CLI mode, run: gemini --help
       version: '0.7.2',
     })
 
-    // Register tools
-    registerQueryTool(server)
-    registerBrainstormTool(server)
-    registerAnalyzeTool(server)
-    registerSummarizeTool(server)
-    registerImageGenTool(server)
-    registerImageEditTool(server)
-    registerVideoGenTool(server)
-    registerCodeExecTool(server)
-    registerSearchTool(server)
-    registerStructuredTool(server)
-    registerYouTubeTool(server)
-    registerDocumentTool(server)
-    registerUrlContextTool(server)
-    registerCacheTool(server)
-    registerSpeechTool(server)
-    registerTokenCountTool(server)
-    registerDeepResearchTool(server)
-    registerImageAnalyzeTool(server)
+    // Registry map of group ID -> register function
+    const toolRegistrations: Record<string, (server: McpServer) => void> = {
+      query: registerQueryTool,
+      brainstorm: registerBrainstormTool,
+      analyze: registerAnalyzeTool,
+      summarize: registerSummarizeTool,
+      'image-gen': registerImageGenTool,
+      'image-edit': registerImageEditTool,
+      'video-gen': registerVideoGenTool,
+      'code-exec': registerCodeExecTool,
+      search: registerSearchTool,
+      structured: registerStructuredTool,
+      youtube: registerYouTubeTool,
+      document: registerDocumentTool,
+      'url-context': registerUrlContextTool,
+      cache: registerCacheTool,
+      speech: registerSpeechTool,
+      'token-count': registerTokenCountTool,
+      'deep-research': registerDeepResearchTool,
+      'image-analyze': registerImageAnalyzeTool,
+    }
+
+    // Register tools based on configuration
+    for (const [groupId, registerFn] of Object.entries(toolRegistrations)) {
+      if (enabledGroups.has(groupId)) {
+        registerFn(server)
+      }
+    }
 
     // Start server with stdio transport
     const transport = new StdioServerTransport()
