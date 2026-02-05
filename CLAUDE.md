@@ -117,6 +117,8 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
 | `GEMINI_OUTPUT_DIR` | No | `./gemini-output` | Output directory for generated files |
 | `VERBOSE` | No | `false` | Enable verbose logging |
 | `QUIET` | No | `false` | Minimize logging |
+| `GEMINI_ENABLED_TOOLS` | No | - | Comma-separated list of tool groups to load |
+| `GEMINI_TOOL_PRESET` | No | - | Preset profile: minimal, text, image, research, media, full |
 
 ## Command Line Options
 
@@ -145,8 +147,9 @@ bun run lint       # Lint code with ESLint
 ## Dependencies
 
 - `@google/genai`: ^1.34.0 - Google Generative AI SDK
-- `@modelcontextprotocol/sdk`: ^1.10.2 - MCP SDK
-- `zod`: ^3.24.0 - Schema validation
+- `@modelcontextprotocol/sdk`: 1.22.0 - MCP SDK (pinned; 1.23.0+ causes TypeScript OOM)
+- `zod`: 3.24.3 - Schema validation (pinned for compatibility with MCP SDK)
+- `zod-to-json-schema`: 3.24.5 - Zod to JSON Schema conversion (pinned; 3.25+ requires zod/v3 export)
 
 ## Architecture Notes
 

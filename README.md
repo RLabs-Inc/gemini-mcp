@@ -322,6 +322,79 @@ The killer combination for development:
 | `GEMINI_VIDEO_MODEL`    | No       | `veo-2.0-generate-001`       | Video model                   |
 | `VERBOSE`               | No       | `false`                      | Enable verbose logging        |
 | `QUIET`                 | No       | `false`                      | Minimize logging              |
+| `GEMINI_ENABLED_TOOLS`  | No       | -                            | Comma-separated list of tool groups to load (e.g., `query,search,image-gen`) |
+| `GEMINI_TOOL_PRESET`    | No       | -                            | Preset profile: `minimal`, `text`, `image`, `research`, `media`, `full` |
+
+---
+
+## Tool Configuration
+
+By default, all 37 tools are loaded. To reduce context usage, configure which tools to load:
+
+### Available Presets
+
+| Preset | Tool Groups |
+|--------|-------------|
+| `minimal` | query, brainstorm |
+| `text` | query, brainstorm, analyze, summarize, structured |
+| `image` | query, image-gen, image-edit, image-analyze |
+| `research` | query, search, deep-research, url-context, document |
+| `media` | query, image-gen, image-edit, image-analyze, video-gen, youtube, speech |
+| `full` | All 18 tool groups (default) |
+
+### Using Presets
+
+```bash
+# Minimal - query and brainstorm
+GEMINI_TOOL_PRESET=minimal
+
+# Text processing
+GEMINI_TOOL_PRESET=text  # query, brainstorm, analyze, summarize, structured
+
+# Image workflows
+GEMINI_TOOL_PRESET=image  # query, image-gen, image-edit, image-analyze
+
+# Research workflows
+GEMINI_TOOL_PRESET=research  # query, search, deep-research, url-context, document
+```
+
+### Using Explicit Tool Lists
+
+```bash
+# Only specific tools
+GEMINI_ENABLED_TOOLS=query,search,image-gen
+```
+
+### Combining Preset + Explicit
+
+```bash
+# Start with preset, add extras
+GEMINI_TOOL_PRESET=minimal
+GEMINI_ENABLED_TOOLS=search,image-gen  # Adds to minimal preset
+```
+
+### Available Tool Groups
+
+| Group | Tools |
+|-------|-------|
+| `query` | gemini-query |
+| `brainstorm` | gemini-brainstorm |
+| `analyze` | gemini-analyze-code, gemini-analyze-text |
+| `summarize` | gemini-summarize |
+| `image-gen` | gemini-generate-image, gemini-image-prompt |
+| `image-edit` | gemini-start-image-edit, gemini-continue-image-edit, gemini-end-image-edit, gemini-list-image-sessions |
+| `video-gen` | gemini-generate-video, gemini-check-video |
+| `code-exec` | gemini-run-code |
+| `search` | gemini-search |
+| `structured` | gemini-structured, gemini-extract |
+| `youtube` | gemini-youtube, gemini-youtube-summary |
+| `document` | gemini-analyze-document, gemini-summarize-pdf, gemini-extract-tables |
+| `url-context` | gemini-analyze-url, gemini-compare-urls, gemini-extract-from-url |
+| `cache` | gemini-create-cache, gemini-query-cache, gemini-list-caches, gemini-delete-cache |
+| `speech` | gemini-speak, gemini-dialogue, gemini-list-voices |
+| `token-count` | gemini-count-tokens |
+| `deep-research` | gemini-deep-research, gemini-check-research, gemini-research-followup |
+| `image-analyze` | gemini-analyze-image |
 
 ---
 
