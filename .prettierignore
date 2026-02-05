@@ -1,0 +1,6 @@
+# Ignore markdown files to preserve original formatting
+*.md
+
+# Ignore generated/build output
+dist/
+node_modules/

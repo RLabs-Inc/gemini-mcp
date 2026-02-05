@@ -52,32 +52,16 @@ export function registerImageEditTool(server: McpServer): void {
   server.tool(
     'gemini-start-image-edit',
     {
-      prompt: z
-        .string()
-        .describe('Initial prompt to generate the base image to edit'),
+      prompt: z.string().describe('Initial prompt to generate the base image to edit'),
       aspectRatio: z
-        .enum([
-          '1:1',
-          '2:3',
-          '3:2',
-          '3:4',
-          '4:3',
-          '4:5',
-          '5:4',
-          '9:16',
-          '16:9',
-          '21:9',
-        ])
+        .enum(['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9'])
         .default('1:1')
         .describe('Aspect ratio for the image'),
       imageSize: z
         .enum(['1K', '2K', '4K'])
         .default('2K')
         .describe('Resolution: 1K (fast), 2K (balanced), 4K (highest quality)'),
-      useGoogleSearch: z
-        .boolean()
-        .default(false)
-        .describe('Ground the image in real-world info via Google Search'),
+      useGoogleSearch: z.boolean().default(false).describe('Ground the image in real-world info via Google Search'),
     },
     async ({ prompt, aspectRatio, imageSize, useGoogleSearch }) => {
       logger.info(`Starting image edit session: ${prompt.substring(0, 50)}...`)
@@ -89,8 +73,7 @@ export function registerImageEditTool(server: McpServer): void {
         }
 
         const genAI = new GoogleGenAI({ apiKey })
-        const imageModel =
-          process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview'
+        const imageModel = process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview'
 
         // Create a chat session for multi-turn editing
         // The SDK handles thought signatures automatically in chat mode
@@ -165,8 +148,7 @@ export function registerImageEditTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error starting image edit session: ${errorMessage}`)
 
         return {
@@ -211,8 +193,10 @@ export function registerImageEditTool(server: McpServer): void {
         }
 
         // Send the edit instruction
-        const chat = session.chat as { sendMessage: (opts: { message: string }) => Promise<unknown> }
-        const response = await chat.sendMessage({ message: prompt }) as {
+        const chat = session.chat as {
+          sendMessage: (opts: { message: string }) => Promise<unknown>
+        }
+        const response = (await chat.sendMessage({ message: prompt })) as {
           candidates?: Array<{
             content?: {
               parts?: Array<{ inlineData?: { data: string; mimeType?: string }; text?: string }>
@@ -274,8 +258,7 @@ export function registerImageEditTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error continuing image edit: ${errorMessage}`)
 
         return {
@@ -326,31 +309,27 @@ export function registerImageEditTool(server: McpServer): void {
   )
 
   // List active editing sessions
-  server.tool(
-    'gemini-list-image-sessions',
-    {},
-    async () => {
-      const sessions = Array.from(activeEditSessions.keys())
+  server.tool('gemini-list-image-sessions', {}, async () => {
+    const sessions = Array.from(activeEditSessions.keys())
 
-      if (sessions.length === 0) {
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: 'No active image editing sessions.\n\nStart one with gemini-start-image-edit.',
-            },
-          ],
-        }
-      }
-
+    if (sessions.length === 0) {
       return {
         content: [
           {
             type: 'text' as const,
-            text: `Active image editing sessions:\n\n${sessions.map((id) => `• ${id}`).join('\n')}\n\nUse gemini-continue-image-edit with a session ID to continue editing.`,
+            text: 'No active image editing sessions.\n\nStart one with gemini-start-image-edit.',
           },
         ],
       }
     }
-  )
+
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: `Active image editing sessions:\n\n${sessions.map((id) => `• ${id}`).join('\n')}\n\nUse gemini-continue-image-edit with a session ID to continue editing.`,
+        },
+      ],
+    }
+  })
 }

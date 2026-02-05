@@ -5,24 +5,7 @@
  * Default theme adapts to terminal colors.
  */
 
-import {
-  cyan,
-  magenta,
-  green,
-  red,
-  yellow,
-  blue,
-  brightBlack,
-  white,
-  brightCyan,
-  brightMagenta,
-  brightGreen,
-  brightYellow,
-  brightBlue,
-  hex,
-  dim,
-  bold,
-} from './colors.js'
+import { cyan, magenta, green, red, yellow, blue, brightBlack, white, brightCyan, hex, dim, bold } from './colors.js'
 
 export interface Theme {
   name: string

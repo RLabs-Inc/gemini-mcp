@@ -48,16 +48,8 @@ export function registerCacheTool(server: McpServer): void {
     {
       filePath: z.string().describe('Path to the file to cache'),
       displayName: z.string().describe('A name to identify this cache'),
-      systemInstruction: z
-        .string()
-        .optional()
-        .describe('System instruction to include with the cache'),
-      ttlMinutes: z
-        .number()
-        .min(1)
-        .max(1440)
-        .default(60)
-        .describe('Time to live in minutes (1-1440, default 60)'),
+      systemInstruction: z.string().optional().describe('System instruction to include with the cache'),
+      ttlMinutes: z.number().min(1).max(1440).default(60).describe('Time to live in minutes (1-1440, default 60)'),
     },
     async ({ filePath, displayName, systemInstruction, ttlMinutes }) => {
       logger.info(`Creating cache: ${displayName}`)
@@ -135,8 +127,7 @@ export function registerCacheTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error creating cache: ${errorMessage}`)
 
         return {
@@ -184,12 +175,14 @@ export function registerCacheTool(server: McpServer): void {
           },
         })
 
-        const usageMetadata = response.usageMetadata as {
-          promptTokenCount?: number
-          cachedContentTokenCount?: number
-          candidatesTokenCount?: number
-          totalTokenCount?: number
-        } | undefined
+        const usageMetadata = response.usageMetadata as
+          | {
+              promptTokenCount?: number
+              cachedContentTokenCount?: number
+              candidatesTokenCount?: number
+              totalTokenCount?: number
+            }
+          | undefined
 
         let usageInfo = ''
         if (usageMetadata) {
@@ -211,8 +204,7 @@ export function registerCacheTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error querying cache: ${errorMessage}`)
 
         return {
@@ -229,73 +221,73 @@ export function registerCacheTool(server: McpServer): void {
   )
 
   // List active caches
-  server.tool(
-    'gemini-list-caches',
-    {},
-    async () => {
-      logger.info('Listing caches')
+  server.tool('gemini-list-caches', {}, async () => {
+    logger.info('Listing caches')
 
-      try {
-        const apiKey = process.env.GEMINI_API_KEY
-        if (!apiKey) {
-          throw new Error('GEMINI_API_KEY not set')
-        }
+    try {
+      const apiKey = process.env.GEMINI_API_KEY
+      if (!apiKey) {
+        throw new Error('GEMINI_API_KEY not set')
+      }
 
-        const genAI = new GoogleGenAI({ apiKey })
+      const genAI = new GoogleGenAI({ apiKey })
 
-        // Get caches from API
-        const caches: Array<{ name?: string; displayName?: string; model?: string; expireTime?: string }> = []
-        const cacheList = await genAI.caches.list()
-        if (cacheList && Array.isArray(cacheList)) {
-          for (const cache of cacheList) {
-            caches.push(cache as { name?: string; displayName?: string; model?: string; expireTime?: string })
-          }
-        }
-
-        if (caches.length === 0) {
-          return {
-            content: [
-              {
-                type: 'text' as const,
-                text: 'No active caches found.\n\nCreate one with gemini-create-cache.',
-              },
-            ],
-          }
-        }
-
-        let text = '**Active Caches:**\n\n'
-        for (const cache of caches) {
-          text += `- **${cache.displayName || cache.name}**\n`
-          text += `  - Name: ${cache.name}\n`
-          text += `  - Model: ${cache.model}\n`
-          text += `  - Expires: ${cache.expireTime}\n\n`
-        }
-
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text,
-            },
-          ],
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
-        logger.error(`Error listing caches: ${errorMessage}`)
-
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: `Error listing caches: ${errorMessage}`,
-            },
-          ],
-          isError: true,
+      // Get caches from API
+      const caches: Array<{
+        name?: string
+        displayName?: string
+        model?: string
+        expireTime?: string
+      }> = []
+      const cacheList = await genAI.caches.list()
+      if (cacheList && Array.isArray(cacheList)) {
+        for (const cache of cacheList) {
+          caches.push(cache as { name?: string; displayName?: string; model?: string; expireTime?: string })
         }
       }
+
+      if (caches.length === 0) {
+        return {
+          content: [
+            {
+              type: 'text' as const,
+              text: 'No active caches found.\n\nCreate one with gemini-create-cache.',
+            },
+          ],
+        }
+      }
+
+      let text = '**Active Caches:**\n\n'
+      for (const cache of caches) {
+        text += `- **${cache.displayName || cache.name}**\n`
+        text += `  - Name: ${cache.name}\n`
+        text += `  - Model: ${cache.model}\n`
+        text += `  - Expires: ${cache.expireTime}\n\n`
+      }
+
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text,
+          },
+        ],
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      logger.error(`Error listing caches: ${errorMessage}`)
+
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: `Error listing caches: ${errorMessage}`,
+          },
+        ],
+        isError: true,
+      }
     }
-  )
+  })
 
   // Delete a cache
   server.tool(
@@ -334,8 +326,7 @@ export function registerCacheTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error deleting cache: ${errorMessage}`)
 
         return {

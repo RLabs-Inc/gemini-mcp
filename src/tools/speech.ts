@@ -20,13 +20,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 // Save PCM audio as WAV file
-function saveWavFile(
-  filename: string,
-  pcmData: Buffer,
-  channels = 1,
-  sampleRate = 24000,
-  bitsPerSample = 16
-): string {
+function saveWavFile(filename: string, pcmData: Buffer, channels = 1, sampleRate = 24000, bitsPerSample = 16): string {
   const outputDir = ensureOutputDir()
   const filePath = path.join(outputDir, filename)
 
@@ -98,8 +92,6 @@ const VOICES = [
   'Sulafat',
 ] as const
 
-type Voice = (typeof VOICES)[number]
-
 /**
  * Register speech generation tools with the MCP server
  */
@@ -118,9 +110,7 @@ export function registerSpeechTool(server: McpServer): void {
       style: z
         .string()
         .optional()
-        .describe(
-          'Style instructions (e.g., "cheerfully", "in a spooky whisper", "with excitement")'
-        ),
+        .describe('Style instructions (e.g., "cheerfully", "in a spooky whisper", "with excitement")'),
     },
     async ({ text, voice, style }) => {
       logger.info(`Speech generation: ${text.substring(0, 50)}...`)
@@ -152,8 +142,7 @@ export function registerSpeechTool(server: McpServer): void {
         })
 
         // Extract audio data
-        const audioData =
-          response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
+        const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
         if (!audioData) {
           throw new Error('No audio data in response')
         }
@@ -175,8 +164,7 @@ export function registerSpeechTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in speech generation: ${errorMessage}`)
 
         return {
@@ -196,36 +184,17 @@ export function registerSpeechTool(server: McpServer): void {
   server.tool(
     'gemini-dialogue',
     {
-      script: z
-        .string()
-        .describe(
-          'The dialogue script with speaker names. Format: "Speaker1: line\\nSpeaker2: line"'
-        ),
+      script: z.string().describe('The dialogue script with speaker names. Format: "Speaker1: line\\nSpeaker2: line"'),
       speaker1: z.string().describe('Name of first speaker as used in script'),
-      speaker1Voice: z
-        .enum(VOICES)
-        .default('Kore')
-        .describe('Voice for speaker 1'),
+      speaker1Voice: z.enum(VOICES).default('Kore').describe('Voice for speaker 1'),
       speaker2: z.string().describe('Name of second speaker as used in script'),
-      speaker2Voice: z
-        .enum(VOICES)
-        .default('Puck')
-        .describe('Voice for speaker 2'),
+      speaker2Voice: z.enum(VOICES).default('Puck').describe('Voice for speaker 2'),
       style: z
         .string()
         .optional()
-        .describe(
-          'Style instructions for the dialogue (e.g., "Make Speaker1 sound tired, Speaker2 excited")'
-        ),
+        .describe('Style instructions for the dialogue (e.g., "Make Speaker1 sound tired, Speaker2 excited")'),
     },
-    async ({
-      script,
-      speaker1,
-      speaker1Voice,
-      speaker2,
-      speaker2Voice,
-      style,
-    }) => {
+    async ({ script, speaker1, speaker1Voice, speaker2, speaker2Voice, style }) => {
       logger.info(`Dialogue generation: ${speaker1} & ${speaker2}`)
 
       try {
@@ -271,8 +240,7 @@ export function registerSpeechTool(server: McpServer): void {
         })
 
         // Extract audio data
-        const audioData =
-          response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
+        const audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data
         if (!audioData) {
           throw new Error('No audio data in response')
         }
@@ -294,8 +262,7 @@ export function registerSpeechTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in dialogue generation: ${errorMessage}`)
 
         return {
@@ -350,8 +317,7 @@ export function registerSpeechTool(server: McpServer): void {
     for (const voice of VOICES) {
       text += `- **${voice}** - ${voiceDescriptions[voice] || ''}\n`
     }
-    text +=
-      '\n*Use these voices with gemini-speak or gemini-dialogue tools.*'
+    text += '\n*Use these voices with gemini-speak or gemini-dialogue tools.*'
 
     return {
       content: [

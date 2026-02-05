@@ -32,14 +32,11 @@ function getMimeType(filePath: string): string {
     '.json': 'application/json',
     '.md': 'text/markdown',
     '.doc': 'application/msword',
-    '.docx':
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     '.xls': 'application/vnd.ms-excel',
-    '.xlsx':
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     '.ppt': 'application/vnd.ms-powerpoint',
-    '.pptx':
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   }
   return mimeTypes[ext] || 'application/octet-stream'
 }
@@ -51,9 +48,7 @@ export function registerDocumentTool(server: McpServer): void {
   server.tool(
     'gemini-analyze-document',
     {
-      filePath: z
-        .string()
-        .describe('Path to the document file (PDF, TXT, CSV, DOCX, etc.)'),
+      filePath: z.string().describe('Path to the document file (PDF, TXT, CSV, DOCX, etc.)'),
       question: z
         .string()
         .describe(
@@ -182,8 +177,7 @@ export function registerDocumentTool(server: McpServer): void {
           }
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in document analysis: ${errorMessage}`)
 
         return {
@@ -204,10 +198,7 @@ export function registerDocumentTool(server: McpServer): void {
     'gemini-summarize-pdf',
     {
       filePath: z.string().describe('Path to the PDF file'),
-      style: z
-        .enum(['brief', 'detailed', 'outline', 'key-points'])
-        .default('brief')
-        .describe('Summary style'),
+      style: z.enum(['brief', 'detailed', 'outline', 'key-points']).default('brief').describe('Summary style'),
     },
     async ({ filePath, style }) => {
       logger.info(`PDF summary: ${filePath}`)
@@ -236,12 +227,10 @@ export function registerDocumentTool(server: McpServer): void {
               'Provide a comprehensive summary of this document, covering all main sections, key arguments, and conclusions.'
             break
           case 'outline':
-            prompt =
-              'Create an outline of this document showing its structure and main topics with sub-points.'
+            prompt = 'Create an outline of this document showing its structure and main topics with sub-points.'
             break
           case 'key-points':
-            prompt =
-              'Extract the key points and takeaways from this document as a bullet-point list.'
+            prompt = 'Extract the key points and takeaways from this document as a bullet-point list.'
             break
           default:
             prompt = 'Summarize this document.'
@@ -280,8 +269,7 @@ export function registerDocumentTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in PDF summary: ${errorMessage}`)
 
         return {
@@ -373,8 +361,7 @@ export function registerDocumentTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in table extraction: ${errorMessage}`)
 
         return {

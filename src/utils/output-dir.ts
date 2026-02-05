@@ -49,19 +49,11 @@ export function getProjectIdentifier(): string {
     const resolvedGitRoot = fs.realpathSync(gitRoot)
 
     // Create short hash of the resolved git root path
-    return crypto
-      .createHash('sha256')
-      .update(resolvedGitRoot)
-      .digest('hex')
-      .substring(0, 16)
+    return crypto.createHash('sha256').update(resolvedGitRoot).digest('hex').substring(0, 16)
   }
 
   // Not a git repository, use resolved current directory
-  return crypto
-    .createHash('sha256')
-    .update(resolvedCwd)
-    .digest('hex')
-    .substring(0, 16)
+  return crypto.createHash('sha256').update(resolvedCwd).digest('hex').substring(0, 16)
 }
 
 /**
@@ -73,19 +65,13 @@ export function getConfigBaseDir(): string {
   switch (platform) {
     case 'win32':
       // Windows: %APPDATA%/gemini-mcp
-      return path.join(
-        process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'),
-        'gemini-mcp'
-      )
+      return path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'), 'gemini-mcp')
 
     case 'darwin':
     case 'linux':
     default:
       // macOS/Linux: ~/.config/gemini-mcp (XDG standard)
-      return path.join(
-        process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'),
-        'gemini-mcp'
-      )
+      return path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'gemini-mcp')
   }
 }
 

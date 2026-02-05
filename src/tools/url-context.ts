@@ -33,18 +33,9 @@ export function registerUrlContextTool(server: McpServer): void {
   server.tool(
     'gemini-analyze-url',
     {
-      urls: z
-        .array(z.string())
-        .min(1)
-        .max(20)
-        .describe('URLs to analyze (1-20 URLs)'),
-      question: z
-        .string()
-        .describe('Question about the URLs or task to perform'),
-      useGoogleSearch: z
-        .boolean()
-        .default(false)
-        .describe('Also use Google Search to find additional context'),
+      urls: z.array(z.string()).min(1).max(20).describe('URLs to analyze (1-20 URLs)'),
+      question: z.string().describe('Question about the URLs or task to perform'),
+      useGoogleSearch: z.boolean().default(false).describe('Also use Google Search to find additional context'),
     },
     async ({ urls, question, useGoogleSearch }) => {
       logger.info(`URL context analysis: ${urls.length} URLs`)
@@ -89,10 +80,7 @@ export function registerUrlContextTool(server: McpServer): void {
         if (urlContextMetadata?.urlMetadata) {
           responseText += '\n\n---\n**URL Retrieval Status:**\n'
           for (const meta of urlContextMetadata.urlMetadata) {
-            const status =
-              meta.urlRetrievalStatus === 'URL_RETRIEVAL_STATUS_SUCCESS'
-                ? '✓'
-                : '✗'
+            const status = meta.urlRetrievalStatus === 'URL_RETRIEVAL_STATUS_SUCCESS' ? '✓' : '✗'
             responseText += `${status} ${meta.retrievedUrl}\n`
           }
         }
@@ -108,8 +96,7 @@ export function registerUrlContextTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in URL analysis: ${errorMessage}`)
 
         return {
@@ -131,10 +118,7 @@ export function registerUrlContextTool(server: McpServer): void {
     {
       url1: z.string().describe('First URL to compare'),
       url2: z.string().describe('Second URL to compare'),
-      aspect: z
-        .string()
-        .optional()
-        .describe('Specific aspect to compare (e.g., "pricing", "features", "ingredients")'),
+      aspect: z.string().optional().describe('Specific aspect to compare (e.g., "pricing", "features", "ingredients")'),
     },
     async ({ url1, url2, aspect }) => {
       logger.info(`URL comparison: ${url1} vs ${url2}`)
@@ -171,8 +155,7 @@ export function registerUrlContextTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in URL comparison: ${errorMessage}`)
 
         return {
@@ -196,10 +179,7 @@ export function registerUrlContextTool(server: McpServer): void {
       dataType: z
         .enum(['prices', 'contacts', 'dates', 'products', 'links', 'custom'])
         .describe('Type of data to extract'),
-      customFields: z
-        .string()
-        .optional()
-        .describe('For custom extraction: comma-separated fields to extract'),
+      customFields: z.string().optional().describe('For custom extraction: comma-separated fields to extract'),
     },
     async ({ url, dataType, customFields }) => {
       logger.info(`URL extraction: ${dataType} from ${url}`)
@@ -260,8 +240,7 @@ export function registerUrlContextTool(server: McpServer): void {
           ],
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in URL extraction: ${errorMessage}`)
 
         return {

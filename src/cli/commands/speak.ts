@@ -14,11 +14,36 @@ import { join } from 'node:path'
 
 // Available voices
 const VOICES = [
-  'Zephyr', 'Puck', 'Charon', 'Kore', 'Fenrir', 'Leda', 'Orus', 'Aoede',
-  'Callirrhoe', 'Autonoe', 'Enceladus', 'Iapetus', 'Umbriel', 'Algieba',
-  'Despina', 'Erinome', 'Algenib', 'Rasalgethi', 'Laomedeia', 'Achernar',
-  'Alnilam', 'Schedar', 'Gacrux', 'Pulcherrima', 'Achird', 'Zubenelgenubi',
-  'Vindemiatrix', 'Sadachbia', 'Sadaltager', 'Sulafat'
+  'Zephyr',
+  'Puck',
+  'Charon',
+  'Kore',
+  'Fenrir',
+  'Leda',
+  'Orus',
+  'Aoede',
+  'Callirrhoe',
+  'Autonoe',
+  'Enceladus',
+  'Iapetus',
+  'Umbriel',
+  'Algieba',
+  'Despina',
+  'Erinome',
+  'Algenib',
+  'Rasalgethi',
+  'Laomedeia',
+  'Achernar',
+  'Alnilam',
+  'Schedar',
+  'Gacrux',
+  'Pulcherrima',
+  'Achird',
+  'Zubenelgenubi',
+  'Vindemiatrix',
+  'Sadachbia',
+  'Sadaltager',
+  'Sulafat',
 ]
 
 function showHelp(): void {
@@ -34,7 +59,9 @@ function showHelp(): void {
   print(theme.colors.primary('Options:'))
   print(`  ${theme.colors.highlight('--voice, -v')}    ${theme.colors.muted('Voice to use (default: Kore)')}`)
   print(`  ${theme.colors.highlight('--output, -o')}   ${theme.colors.muted('Output file path')}`)
-  print(`  ${theme.colors.highlight('--style, -s')}    ${theme.colors.muted('Speaking style (e.g., "cheerfully", "sadly")')}`)
+  print(
+    `  ${theme.colors.highlight('--style, -s')}    ${theme.colors.muted('Speaking style (e.g., "cheerfully", "sadly")')}`
+  )
   print(`  ${theme.colors.highlight('--list-voices')} ${theme.colors.muted('List all available voices')}`)
   print(`  ${theme.colors.highlight('--help, -h')}     ${theme.colors.muted('Show this help')}`)
   print('')
@@ -168,8 +195,7 @@ export async function speakCommand(argv: string[]): Promise<void> {
     }
 
     // Determine output path
-    const outputPath = values.output as string ||
-      join(ensureOutputDir(), `speech-${Date.now()}.mp3`)
+    const outputPath = (values.output as string) || join(ensureOutputDir(), `speech-${Date.now()}.mp3`)
 
     // Save audio file
     const audioBuffer = Buffer.from(part.inlineData.data, 'base64')
@@ -191,7 +217,6 @@ export async function speakCommand(argv: string[]): Promise<void> {
     print('')
 
     printSuccess(`Audio saved to: ${outputPath}`)
-
   } catch (error) {
     s.error('Speech generation failed')
     printError(error instanceof Error ? error.message : String(error))

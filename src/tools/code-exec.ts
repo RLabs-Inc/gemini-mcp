@@ -45,15 +45,11 @@ export function registerCodeExecTool(server: McpServer): void {
     {
       prompt: z
         .string()
-        .describe(
-          'What you want Gemini to compute or analyze. Gemini will write Python code and execute it.'
-        ),
+        .describe('What you want Gemini to compute or analyze. Gemini will write Python code and execute it.'),
       data: z
         .string()
         .optional()
-        .describe(
-          'Optional CSV or text data to analyze. Will be passed to the code environment.'
-        ),
+        .describe('Optional CSV or text data to analyze. Will be passed to the code environment.'),
     },
     async ({ prompt, data }) => {
       logger.info(`Code execution request: ${prompt.substring(0, 50)}...`)
@@ -97,10 +93,8 @@ export function registerCodeExecTool(server: McpServer): void {
           throw new Error('No response parts from code execution')
         }
 
-        const resultContent: Array<
-          | { type: 'text'; text: string }
-          | { type: 'image'; data: string; mimeType: string }
-        > = []
+        const resultContent: Array<{ type: 'text'; text: string } | { type: 'image'; data: string; mimeType: string }> =
+          []
 
         let codeBlock = ''
         let executionOutput = ''
@@ -157,8 +151,7 @@ export function registerCodeExecTool(server: McpServer): void {
 
         return { content: resultContent }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error)
+        const errorMessage = error instanceof Error ? error.message : String(error)
         logger.error(`Error in code execution: ${errorMessage}`)
 
         return {

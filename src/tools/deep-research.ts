@@ -8,11 +8,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { logger } from '../utils/logger.js'
-import {
-  startDeepResearch,
-  checkDeepResearch,
-  followUpResearch,
-} from '../gemini-client.js'
+import { startDeepResearch, checkDeepResearch, followUpResearch } from '../gemini-client.js'
 
 // Store active research operations for polling
 const activeResearchOperations = new Map<
@@ -147,9 +143,7 @@ The Interactions API required for Deep Research may not be available yet in your
           logger.info(`Research completed: ${researchId}`)
 
           // Build the saved path info if available
-          const savedPathInfo = result.savedPath
-            ? `| **Full Response** | \`${result.savedPath}\` |`
-            : ''
+          const savedPathInfo = result.savedPath ? `| **Full Response** | \`${result.savedPath}\` |` : ''
 
           return {
             content: [

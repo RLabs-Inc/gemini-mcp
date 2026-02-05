@@ -7,11 +7,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import {
-  generateWithGeminiPro,
-  generateWithGeminiFlash,
-  type ThinkingLevel,
-} from '../gemini-client.js'
+import { generateWithGeminiPro, generateWithGeminiFlash, type ThinkingLevel } from '../gemini-client.js'
 
 /**
  * Register query tools with the MCP server
@@ -22,10 +18,7 @@ export function registerQueryTool(server: McpServer): void {
     'gemini-query',
     {
       prompt: z.string().describe('The prompt to send to Gemini'),
-      model: z
-        .enum(['pro', 'flash'])
-        .default('pro')
-        .describe('The Gemini model to use (pro or flash)'),
+      model: z.enum(['pro', 'flash']).default('pro').describe('The Gemini model to use (pro or flash)'),
       thinkingLevel: z
         .enum(['minimal', 'low', 'medium', 'high'])
         .optional()
@@ -40,44 +33,48 @@ export function registerQueryTool(server: McpServer): void {
       )
 
       try {
-        const options = thinkingLevel
-          ? { thinkingLevel: thinkingLevel as ThinkingLevel }
-          : {}
+        const options = thinkingLevel ? { thinkingLevel: thinkingLevel as ThinkingLevel } : {}
 
         const response =
           model === 'pro'
             ? await generateWithGeminiPro(prompt, options)
             : await generateWithGeminiFlash(prompt, options)
-        
+
         // Check for empty response to avoid potential MCP errors
-        if (!response || response.trim() === "") {
+        if (!response || response.trim() === '') {
           return {
-            content: [{ 
-              type: "text", 
-              text: "Error: Received empty response from Gemini API" 
-            }],
-            isError: true
-          };
+            content: [
+              {
+                type: 'text',
+                text: 'Error: Received empty response from Gemini API',
+              },
+            ],
+            isError: true,
+          }
         }
-        
+
         return {
-          content: [{ 
-            type: "text", 
-            text: response 
-          }]
-        };
+          content: [
+            {
+              type: 'text',
+              text: response,
+            },
+          ],
+        }
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error(`Error querying Gemini: ${errorMessage}`);
-        
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        console.error(`Error querying Gemini: ${errorMessage}`)
+
         return {
-          content: [{ 
-            type: "text", 
-            text: `Error: ${errorMessage}` 
-          }],
-          isError: true
-        };
+          content: [
+            {
+              type: 'text',
+              text: `Error: ${errorMessage}`,
+            },
+          ],
+          isError: true,
+        }
       }
     }
-  );
+  )
 }

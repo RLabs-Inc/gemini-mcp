@@ -9,55 +9,53 @@
  * - bbox_pixels: {x, y, width, height} in pixel coordinates (when dimensions available)
  */
 
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
-import { GoogleGenAI } from "@google/genai";
-import { logger } from "../utils/logger.js";
-import * as fs from "fs";
-import * as path from "path";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { z } from 'zod'
+import { GoogleGenAI } from '@google/genai'
+import { logger } from '../utils/logger.js'
+import * as fs from 'fs'
+import * as path from 'path'
 
 /**
  * Extract image dimensions from PNG or JPEG file
  */
-function extractImageDimensions(
-  filePath: string,
-): { width: number; height: number } | null {
+function extractImageDimensions(filePath: string): { width: number; height: number } | null {
   try {
-    const buffer = fs.readFileSync(filePath);
-    const ext = path.extname(filePath).toLowerCase();
+    const buffer = fs.readFileSync(filePath)
+    const ext = path.extname(filePath).toLowerCase()
 
-    if (ext === ".png") {
+    if (ext === '.png') {
       // PNG format: width and height are at bytes 16-23 (big-endian)
-      if (buffer.length < 24) return null;
-      if (buffer.toString("ascii", 1, 4) !== "PNG") return null;
+      if (buffer.length < 24) return null
+      if (buffer.toString('ascii', 1, 4) !== 'PNG') return null
 
-      const width = buffer.readUInt32BE(16);
-      const height = buffer.readUInt32BE(20);
-      return { width, height };
-    } else if (ext === ".jpg" || ext === ".jpeg") {
+      const width = buffer.readUInt32BE(16)
+      const height = buffer.readUInt32BE(20)
+      return { width, height }
+    } else if (ext === '.jpg' || ext === '.jpeg') {
       // JPEG format: scan for SOF0 or SOF2 markers
-      let offset = 2; // Skip initial 0xFFD8
+      let offset = 2 // Skip initial 0xFFD8
       while (offset < buffer.length - 8) {
-        if (buffer[offset] !== 0xff) break;
+        if (buffer[offset] !== 0xff) break
 
-        const marker = buffer[offset + 1];
-        const segmentLength = buffer.readUInt16BE(offset + 2);
+        const marker = buffer[offset + 1]
+        const segmentLength = buffer.readUInt16BE(offset + 2)
 
         // SOF0 (0xC0) or SOF2 (0xC2) markers contain dimensions
         if (marker === 0xc0 || marker === 0xc2) {
-          const height = buffer.readUInt16BE(offset + 5);
-          const width = buffer.readUInt16BE(offset + 7);
-          return { width, height };
+          const height = buffer.readUInt16BE(offset + 5)
+          const width = buffer.readUInt16BE(offset + 7)
+          return { width, height }
         }
 
-        offset += 2 + segmentLength;
+        offset += 2 + segmentLength
       }
     }
 
-    return null;
+    return null
   } catch (error) {
-    logger.debug(`Failed to extract dimensions: ${error}`);
-    return null;
+    logger.debug(`Failed to extract dimensions: ${error}`)
+    return null
   }
 }
 
@@ -67,32 +65,32 @@ function extractImageDimensions(
 function convertToPixelCoords(
   box2d: number[],
   width: number,
-  height: number,
+  height: number
 ): { x: number; y: number; width: number; height: number } {
-  const [yMin, xMin, yMax, xMax] = box2d;
+  const [yMin, xMin, yMax, xMax] = box2d
   return {
     x: Math.round((xMin / 1000) * width),
     y: Math.round((yMin / 1000) * height),
     width: Math.round(((xMax - xMin) / 1000) * width),
     height: Math.round(((yMax - yMin) / 1000) * height),
-  };
+  }
 }
 
 /**
  * Get MIME type from file extension
  */
 function getImageMimeType(filePath: string): string {
-  const ext = path.extname(filePath).toLowerCase();
+  const ext = path.extname(filePath).toLowerCase()
   const mimeTypes: Record<string, string> = {
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".webp": "image/webp",
-    ".heic": "image/heic",
-    ".heif": "image/heif",
-    ".gif": "image/gif",
-  };
-  return mimeTypes[ext] || "image/jpeg";
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.webp': 'image/webp',
+    '.heic': 'image/heic',
+    '.heif': 'image/heif',
+    '.gif': 'image/gif',
+  }
+  return mimeTypes[ext] || 'image/jpeg'
 }
 
 /**
@@ -100,80 +98,70 @@ function getImageMimeType(filePath: string): string {
  */
 export function registerImageAnalyzeTool(server: McpServer): void {
   server.tool(
-    "gemini-analyze-image",
+    'gemini-analyze-image',
     {
-      imagePath: z
-        .string()
-        .describe(
-          "Path to image file. Supports JPEG, PNG, WebP, HEIC, HEIF, GIF",
-        ),
+      imagePath: z.string().describe('Path to image file. Supports JPEG, PNG, WebP, HEIC, HEIF, GIF'),
       query: z
         .string()
         .optional()
         .describe(
-          'Specific question about the image (e.g., "What objects are in this image?", "Count the people"). Default: "Analyze this image in detail."',
+          'Specific question about the image (e.g., "What objects are in this image?", "Count the people"). Default: "Analyze this image in detail."'
         ),
       detectObjects: z
         .boolean()
         .default(true)
-        .describe(
-          "Enable object detection with bounding boxes (returns box_2d coordinates). Default: true",
-        ),
+        .describe('Enable object detection with bounding boxes (returns box_2d coordinates). Default: true'),
       model: z
-        .enum(["pro", "flash"])
-        .default("flash")
-        .describe("Model to use: pro (more accurate) or flash (faster). Default: flash"),
+        .enum(['pro', 'flash'])
+        .default('flash')
+        .describe('Model to use: pro (more accurate) or flash (faster). Default: flash'),
       thinkingLevel: z
-        .enum(["minimal", "low", "medium", "high"])
+        .enum(['minimal', 'low', 'medium', 'high'])
         .optional()
         .describe(
-          "Reasoning depth: minimal/low for fast responses, medium/high for complex analysis. " +
-          "Pro supports low/high only. Flash supports all levels. Default: high"
+          'Reasoning depth: minimal/low for fast responses, medium/high for complex analysis. ' +
+            'Pro supports low/high only. Flash supports all levels. Default: high'
         ),
       mediaResolution: z
-        .enum(["low", "medium", "high"])
-        .default("medium")
-        .describe(
-          "Resolution for processing: low (faster), medium (balanced), high (more detail). Default: medium",
-        ),
+        .enum(['low', 'medium', 'high'])
+        .default('medium')
+        .describe('Resolution for processing: low (faster), medium (balanced), high (more detail). Default: medium'),
     },
     async ({ imagePath, query, detectObjects, model, thinkingLevel, mediaResolution }) => {
-      logger.info(`Analyzing image: ${imagePath}`);
+      logger.info(`Analyzing image: ${imagePath}`)
 
       try {
-        const apiKey = process.env.GEMINI_API_KEY;
+        const apiKey = process.env.GEMINI_API_KEY
         if (!apiKey) {
-          throw new Error("GEMINI_API_KEY not set");
+          throw new Error('GEMINI_API_KEY not set')
         }
 
         if (!fs.existsSync(imagePath)) {
-          throw new Error(`File not found: ${imagePath}`);
+          throw new Error(`File not found: ${imagePath}`)
         }
 
-        const fileBuffer = fs.readFileSync(imagePath);
-        const mimeType = getImageMimeType(imagePath);
-        const dimensions = extractImageDimensions(imagePath);
+        const fileBuffer = fs.readFileSync(imagePath)
+        const mimeType = getImageMimeType(imagePath)
+        const dimensions = extractImageDimensions(imagePath)
 
-        const genAI = new GoogleGenAI({ apiKey });
+        const genAI = new GoogleGenAI({ apiKey })
         const modelName =
-          model === "pro"
-            ? process.env.GEMINI_PRO_MODEL || "gemini-3-pro-preview"
-            : process.env.GEMINI_FLASH_MODEL || "gemini-3-flash-preview";
+          model === 'pro'
+            ? process.env.GEMINI_PRO_MODEL || 'gemini-3-pro-preview'
+            : process.env.GEMINI_FLASH_MODEL || 'gemini-3-flash-preview'
 
-        const fileSize = fileBuffer.length;
-        logger.debug(`Image size: ${fileSize} bytes, MIME type: ${mimeType}`);
+        const fileSize = fileBuffer.length
+        logger.debug(`Image size: ${fileSize} bytes, MIME type: ${mimeType}`)
 
         // Log image dimensions (for pixel coordinate conversion)
         if (dimensions) {
-          logger.debug(
-            `Image dimensions: ${dimensions.width}x${dimensions.height}`,
-          );
+          logger.debug(`Image dimensions: ${dimensions.width}x${dimensions.height}`)
         } else {
-          logger.debug("Could not extract image dimensions");
+          logger.debug('Could not extract image dimensions')
         }
 
         // Build prompt based on parameters
-        let prompt = query || "Analyze this image in detail.";
+        let prompt = query || 'Analyze this image in detail.'
 
         if (detectObjects) {
           prompt += `\n\nFor each object you identify, provide bounding box coordinates in the box_2d format: [y_min, x_min, y_max, x_max] where coordinates are normalized to 0-1000 scale.
@@ -190,77 +178,82 @@ Return your response as a JSON object with this structure:
   ]
 }
 
-If you cannot detect specific objects or bounding boxes are not applicable, return an empty objects array.`;
+If you cannot detect specific objects or bounding boxes are not applicable, return an empty objects array.`
         }
 
         // Map resolution to API parameter
         const resolutionMap: Record<string, unknown> = {
-          low: "media_resolution_low",
-          medium: "media_resolution_medium",
-          high: "media_resolution_high",
-        };
+          low: 'media_resolution_low',
+          medium: 'media_resolution_medium',
+          high: 'media_resolution_high',
+        }
 
         // For files <20MB, use inline data. For larger files, use Files API
-        let responseText: string;
+        let responseText: string
 
         if (fileSize > 20 * 1024 * 1024) {
           // Upload using Files API
-          logger.info("Large file detected, uploading via Files API...");
+          logger.info('Large file detected, uploading via Files API...')
 
           const uploadedFile = await genAI.files.upload({
             file: new Blob([new Uint8Array(fileBuffer)], { type: mimeType }),
             config: { mimeType },
-          });
+          })
 
-          const config: Record<string, unknown> = {};
-          if (mediaResolution !== "medium") {
-            config.mediaResolution = resolutionMap[mediaResolution];
+          const config: Record<string, unknown> = {}
+          if (mediaResolution !== 'medium') {
+            config.mediaResolution = resolutionMap[mediaResolution]
           }
 
           // Add thinking config for Gemini 3
           if (thinkingLevel) {
             // Pro only supports low/high, Flash supports all levels
-            const effectiveLevel = model === "pro"
-              ? (thinkingLevel === "minimal" || thinkingLevel === "low" ? "low" : "high")
-              : thinkingLevel;
-            config.thinkingConfig = { thinkingLevel: effectiveLevel };
-            logger.debug(`Using thinking level: ${effectiveLevel}${model === "pro" && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ""}`);
+            const effectiveLevel =
+              model === 'pro'
+                ? thinkingLevel === 'minimal' || thinkingLevel === 'low'
+                  ? 'low'
+                  : 'high'
+                : thinkingLevel
+            config.thinkingConfig = { thinkingLevel: effectiveLevel }
+            logger.debug(
+              `Using thinking level: ${effectiveLevel}${model === 'pro' && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ''}`
+            )
           }
 
           // Add structured output for object detection
           if (detectObjects) {
-            config.responseMimeType = "application/json";
+            config.responseMimeType = 'application/json'
             config.responseJsonSchema = {
-              type: "object",
+              type: 'object',
               properties: {
-                description: { type: "string" },
+                description: { type: 'string' },
                 objects: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      label: { type: "string" },
-                      confidence: { type: "string" },
+                      label: { type: 'string' },
+                      confidence: { type: 'string' },
                       box_2d: {
-                        type: "array",
-                        items: { type: "number" },
+                        type: 'array',
+                        items: { type: 'number' },
                         minItems: 4,
                         maxItems: 4,
                       },
                     },
-                    required: ["label", "confidence", "box_2d"],
+                    required: ['label', 'confidence', 'box_2d'],
                   },
                 },
               },
-              required: ["description", "objects"],
-            };
+              required: ['description', 'objects'],
+            }
           }
 
           const response = await genAI.models.generateContent({
             model: modelName,
             contents: [
               {
-                role: "user",
+                role: 'user',
                 parts: [
                   {
                     fileData: {
@@ -273,62 +266,67 @@ If you cannot detect specific objects or bounding boxes are not applicable, retu
               },
             ],
             config: Object.keys(config).length > 0 ? config : undefined,
-          });
+          })
 
-          responseText = response.text || "";
+          responseText = response.text || ''
         } else {
           // Use inline data for smaller files
-          const base64Data = fileBuffer.toString("base64");
+          const base64Data = fileBuffer.toString('base64')
 
-          const inlineConfig: Record<string, unknown> = {};
-          if (mediaResolution !== "medium") {
-            inlineConfig.mediaResolution = resolutionMap[mediaResolution];
+          const inlineConfig: Record<string, unknown> = {}
+          if (mediaResolution !== 'medium') {
+            inlineConfig.mediaResolution = resolutionMap[mediaResolution]
           }
 
           // Add thinking config for Gemini 3
           if (thinkingLevel) {
             // Pro only supports low/high, Flash supports all levels
-            const effectiveLevel = model === "pro"
-              ? (thinkingLevel === "minimal" || thinkingLevel === "low" ? "low" : "high")
-              : thinkingLevel;
-            inlineConfig.thinkingConfig = { thinkingLevel: effectiveLevel };
-            logger.debug(`Using thinking level: ${effectiveLevel}${model === "pro" && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ""}`);
+            const effectiveLevel =
+              model === 'pro'
+                ? thinkingLevel === 'minimal' || thinkingLevel === 'low'
+                  ? 'low'
+                  : 'high'
+                : thinkingLevel
+            inlineConfig.thinkingConfig = { thinkingLevel: effectiveLevel }
+            logger.debug(
+              `Using thinking level: ${effectiveLevel}${model === 'pro' && effectiveLevel !== thinkingLevel ? ` (requested: ${thinkingLevel})` : ''}`
+            )
           }
 
           // Add structured output for object detection
           if (detectObjects) {
-            inlineConfig.responseMimeType = "application/json";
+            inlineConfig.responseMimeType = 'application/json'
             inlineConfig.responseJsonSchema = {
-              type: "object",
+              type: 'object',
               properties: {
-                description: { type: "string" },
+                description: { type: 'string' },
                 objects: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      label: { type: "string" },
-                      confidence: { type: "string" },
+                      label: { type: 'string' },
+                      confidence: { type: 'string' },
                       box_2d: {
-                        type: "array",
-                        items: { type: "number" },
+                        type: 'array',
+                        items: { type: 'number' },
                         minItems: 4,
                         maxItems: 4,
                       },
                     },
-                    required: ["label", "confidence", "box_2d"],
+                    required: ['label', 'confidence', 'box_2d'],
                   },
                 },
               },
-              required: ["description", "objects"],
-            };
+              required: ['description', 'objects'],
+            }
           }
 
           const response = await genAI.models.generateContent({
             model: modelName,
             contents: [
               {
-                role: "user",
+                role: 'user',
                 parts: [
                   {
                     inlineData: {
@@ -340,87 +338,79 @@ If you cannot detect specific objects or bounding boxes are not applicable, retu
                 ],
               },
             ],
-            config:
-              Object.keys(inlineConfig).length > 0 ? inlineConfig : undefined,
-          });
+            config: Object.keys(inlineConfig).length > 0 ? inlineConfig : undefined,
+          })
 
-          responseText = response.text || "";
+          responseText = response.text || ''
         }
 
         // Process response
         if (detectObjects && responseText) {
           try {
-            const parsed = JSON.parse(responseText);
+            const parsed = JSON.parse(responseText)
 
             // Add pixel coordinates if dimensions are available
             if (dimensions && parsed.objects && Array.isArray(parsed.objects)) {
-              parsed.objects = parsed.objects.map(
-                (obj: Record<string, unknown>) => {
-                  if (Array.isArray(obj.box_2d) && obj.box_2d.length === 4) {
-                    return {
-                      ...obj,
-                      bbox_pixels: convertToPixelCoords(
-                        obj.box_2d as number[],
-                        dimensions.width,
-                        dimensions.height,
-                      ),
-                    };
+              parsed.objects = parsed.objects.map((obj: Record<string, unknown>) => {
+                if (Array.isArray(obj.box_2d) && obj.box_2d.length === 4) {
+                  return {
+                    ...obj,
+                    bbox_pixels: convertToPixelCoords(obj.box_2d as number[], dimensions.width, dimensions.height),
                   }
-                  return obj;
-                },
-              );
+                }
+                return obj
+              })
             }
 
-            const formattedJson = JSON.stringify(parsed, null, 2);
-            logger.info("Image analysis completed with object detection");
+            const formattedJson = JSON.stringify(parsed, null, 2)
+            logger.info('Image analysis completed with object detection')
 
             return {
               content: [
                 {
-                  type: "text" as const,
+                  type: 'text' as const,
                   text: `**Image Analysis Results:**\n\`\`\`json\n${formattedJson}\n\`\`\``,
                 },
               ],
-            };
-          } catch (parseError) {
+            }
+          } catch (_parseError) {
             // Fallback to plain text if JSON parsing fails
-            logger.warn("Failed to parse JSON response, returning as text");
+            logger.warn('Failed to parse JSON response, returning as text')
             return {
               content: [
                 {
-                  type: "text" as const,
+                  type: 'text' as const,
                   text: responseText,
                 },
               ],
-            };
+            }
           }
         }
 
-        logger.info("Image analysis completed");
+        logger.info('Image analysis completed')
 
         return {
           content: [
             {
-              type: "text" as const,
-              text: responseText || "Unable to analyze image.",
+              type: 'text' as const,
+              text: responseText || 'Unable to analyze image.',
             },
           ],
-        };
+        }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        logger.error(`Error in image analysis: ${errorMessage}`);
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        logger.error(`Error in image analysis: ${errorMessage}`)
 
         return {
           content: [
             {
-              type: "text" as const,
+              type: 'text' as const,
               text: `Error analyzing image: ${errorMessage}`,
             },
           ],
           isError: true,
-        };
+        }
       }
-    },
-  );
+    }
+  )
 }

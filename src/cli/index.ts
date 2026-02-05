@@ -4,7 +4,6 @@
  * Routes commands to their handlers and provides the main CLI interface.
  */
 
-import { parseArgs } from 'node:util'
 import { loadConfig, setCachedConfig, getApiKey } from './config.js'
 import { setTheme, header, print, printError, printMuted, t } from './ui/index.js'
 
@@ -83,9 +82,7 @@ const commands: Record<string, Command> = {
 function showHelp(): void {
   const theme = t()
 
-  print(
-    header('Gemini CLI', `AI-powered tools at your terminal (v${VERSION})`)
-  )
+  print(header('Gemini CLI', `AI-powered tools at your terminal (v${VERSION})`))
   print('')
 
   print(theme.colors.primary('Usage:'))
@@ -107,7 +104,9 @@ function showHelp(): void {
   print(theme.colors.primary('Options:'))
   print(`  ${theme.colors.highlight('-h, --help')}     ${theme.colors.muted('Show this help')}`)
   print(`  ${theme.colors.highlight('-v, --version')}  ${theme.colors.muted('Show version')}`)
-  print(`  ${theme.colors.highlight('--theme')}        ${theme.colors.muted('Set color theme (terminal, neon, minimal, ocean, forest)')}`)
+  print(
+    `  ${theme.colors.highlight('--theme')}        ${theme.colors.muted('Set color theme (terminal, neon, minimal, ocean, forest)')}`
+  )
   print('')
 
   print(theme.colors.primary('Examples:'))

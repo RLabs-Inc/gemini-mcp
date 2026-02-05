@@ -32,7 +32,6 @@ export class Progress {
   private label: string = ''
 
   constructor(options: ProgressOptions = {}) {
-    const theme = getTheme()
     this.total = options.total ?? 100
     this.width = options.width ?? 30
     this.complete = options.complete ?? '█'
@@ -118,7 +117,7 @@ export class Progress {
       const elapsed = (Date.now() - this.startTime) / 1000
       this.stream.write(
         `${theme.colors.success(theme.symbols.success)} ${this.label || 'Complete'} ` +
-        `${theme.colors.muted(`(${formatTime(elapsed)})`)}\n`
+          `${theme.colors.muted(`(${formatTime(elapsed)})`)}\n`
       )
     }
 
@@ -129,9 +128,7 @@ export class Progress {
   fail(message?: string): void {
     const theme = getTheme()
     this.stream.write('\r\x1b[K')
-    this.stream.write(
-      `${theme.colors.error(theme.symbols.error)} ${message || 'Failed'}\n`
-    )
+    this.stream.write(`${theme.colors.error(theme.symbols.error)} ${message || 'Failed'}\n`)
     this.stream.write('\x1b[?25h')
   }
 }
