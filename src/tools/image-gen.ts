@@ -45,9 +45,9 @@ export function registerImageGenTool(server: McpServer): void {
         ),
       thinkingLevel: z
         .enum(['minimal', 'low', 'medium', 'high'])
-        .default('high')
+        .optional()
         .describe(
-          'Reasoning depth for image generation. high (default) produces best quality. Env var GEMINI_IMAGE_THINKING_LEVEL also supported.'
+          'Reasoning depth for image generation. Defaults to high if not set. Env var GEMINI_IMAGE_THINKING_LEVEL also supported.'
         ),
       personGeneration: z
         .enum(['ALLOW_ALL', 'ALLOW_ADULT', 'ALLOW_NONE'])
@@ -82,7 +82,7 @@ export function registerImageGenTool(server: McpServer): void {
           },
           {
             type: 'text',
-            text: `Image generated successfully!\n\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${thinkingLevel}${useGoogleSearch ? ', with Google Search grounding' : ''}\nSaved to: ${result.filePath}\nOutput directory: ${getOutputDir()}${result.description ? `\n\nGemini's description: ${result.description}` : ''}`,
+            text: `Image generated successfully!\n\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${thinkingLevel || process.env.GEMINI_IMAGE_THINKING_LEVEL || 'high'}${useGoogleSearch ? ', with Google Search grounding' : ''}\nSaved to: ${result.filePath}\nOutput directory: ${getOutputDir()}${result.description ? `\n\nGemini's description: ${result.description}` : ''}`,
           },
         ]
 

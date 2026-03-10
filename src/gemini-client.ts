@@ -320,7 +320,7 @@ export async function generateImage(
     }
 
     // Add thinking config - defaults to high via env var or parameter
-    const effectiveThinkingLevel = thinkingLevel || (process.env.GEMINI_IMAGE_THINKING_LEVEL as ThinkingLevel) || 'high'
+    const effectiveThinkingLevel = thinkingLevel ?? (process.env.GEMINI_IMAGE_THINKING_LEVEL as ThinkingLevel) ?? 'high'
     config.thinkingConfig = { thinkingLevel: effectiveThinkingLevel }
     logger.debug(`Using thinking level: ${effectiveThinkingLevel}`)
 

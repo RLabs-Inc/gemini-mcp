@@ -64,9 +64,9 @@ export function registerImageEditTool(server: McpServer): void {
       useGoogleSearch: z.boolean().default(false).describe('Ground the image in real-world info via Google Search'),
       thinkingLevel: z
         .enum(['minimal', 'low', 'medium', 'high'])
-        .default('high')
+        .optional()
         .describe(
-          'Reasoning depth for image generation. high (default) produces best quality.'
+          'Reasoning depth for image generation. Defaults to high if not set.'
         ),
       personGeneration: z
         .enum(['ALLOW_ALL', 'ALLOW_ADULT', 'ALLOW_NONE'])
@@ -100,7 +100,7 @@ export function registerImageEditTool(server: McpServer): void {
         }
 
         // Add thinking config - defaults to high via env var or parameter
-        const effectiveThinkingLevel = thinkingLevel || (process.env.GEMINI_IMAGE_THINKING_LEVEL as string) || 'high'
+        const effectiveThinkingLevel = thinkingLevel ?? (process.env.GEMINI_IMAGE_THINKING_LEVEL as string) ?? 'high'
         chatConfig.thinkingConfig = { thinkingLevel: effectiveThinkingLevel }
         logger.debug(`Using thinking level: ${effectiveThinkingLevel}`)
 
@@ -172,7 +172,7 @@ export function registerImageEditTool(server: McpServer): void {
             },
             {
               type: 'text' as const,
-              text: `Image edit session started!\n\nSession ID: ${sessionId}\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${thinkingLevel}${useGoogleSearch ? ', with Google Search' : ''}\nSaved to: ${filePath}\n\nUse gemini-continue-image-edit with this session ID to make changes.${description ? `\n\nGemini's description: ${description}` : ''}`,
+              text: `Image edit session started!\n\nSession ID: ${sessionId}\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${effectiveThinkingLevel}${useGoogleSearch ? ', with Google Search' : ''}\nSaved to: ${filePath}\n\nUse gemini-continue-image-edit with this session ID to make changes.${description ? `\n\nGemini's description: ${description}` : ''}`,
             },
           ],
         }
