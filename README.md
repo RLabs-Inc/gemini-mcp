@@ -100,6 +100,9 @@ style: "cyberpunk" (optional)
 aspectRatio: "16:9" (1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9)
 imageSize: "2K" (1K, 2K, 4K)
 useGoogleSearch: false (ground in real-world info)
+thinkingLevel: "high" (optional - minimal, low, medium, high)
+personGeneration: "ALLOW_ALL" (optional - ALLOW_ALL, ALLOW_ADULT, ALLOW_NONE)
+seed: 42 (optional - for reproducible results)
 ```
 
 ### gemini-start-image-edit
@@ -111,6 +114,9 @@ prompt: "a cozy cabin in the mountains"
 aspectRatio: "16:9"
 imageSize: "2K"
 useGoogleSearch: false
+thinkingLevel: "high" (optional - minimal, low, medium, high)
+personGeneration: "ALLOW_ALL" (optional - ALLOW_ALL, ALLOW_ADULT, ALLOW_NONE)
+seed: 42 (optional - for reproducible results)
 ```
 
 Returns a session ID for iterative editing.
@@ -319,6 +325,7 @@ The killer combination for development:
 | `GEMINI_PRO_MODEL`      | No       | `gemini-3-pro-preview`       | Pro model (Gemini 3)          |
 | `GEMINI_FLASH_MODEL`    | No       | `gemini-3-flash-preview`     | Flash model (Gemini 3)        |
 | `GEMINI_IMAGE_MODEL`    | No       | `gemini-3-pro-image-preview` | Image model (Nano Banana Pro) |
+| `GEMINI_IMAGE_THINKING_LEVEL` | No  | `high`                       | Default thinking level for image generation (minimal, low, medium, high) |
 | `GEMINI_VIDEO_MODEL`    | No       | `veo-2.0-generate-001`       | Video model                   |
 | `VERBOSE`               | No       | `false`                      | Enable verbose logging        |
 | `QUIET`                 | No       | `false`                      | Minimize logging              |
