@@ -43,8 +43,22 @@ export function registerImageGenTool(server: McpServer): void {
         .describe(
           'Ground the image in real-world info via Google Search (useful for current events, real places, etc.)'
         ),
+      thinkingLevel: z
+        .enum(['minimal', 'low', 'medium', 'high'])
+        .default('high')
+        .describe(
+          'Reasoning depth for image generation. high (default) produces best quality. Env var GEMINI_IMAGE_THINKING_LEVEL also supported.'
+        ),
+      personGeneration: z
+        .enum(['ALLOW_ALL', 'ALLOW_ADULT', 'ALLOW_NONE'])
+        .optional()
+        .describe('Control generation of people in images. ALLOW_NONE prevents any people from appearing.'),
+      seed: z
+        .number()
+        .optional()
+        .describe('Seed for reproducible results. Use the same seed to get consistent outputs.'),
     },
-    async ({ prompt, style, aspectRatio, imageSize, useGoogleSearch }) => {
+    async ({ prompt, style, aspectRatio, imageSize, useGoogleSearch, thinkingLevel, personGeneration, seed }) => {
       logger.info(`Generating ${imageSize} image: ${prompt.substring(0, 50)}...`)
 
       try {
@@ -54,6 +68,9 @@ export function registerImageGenTool(server: McpServer): void {
           style,
           saveToFile: true,
           useGoogleSearch,
+          thinkingLevel,
+          personGeneration,
+          seed,
         })
 
         // Return the image in MCP format - Claude will be able to SEE this!
@@ -65,7 +82,7 @@ export function registerImageGenTool(server: McpServer): void {
           },
           {
             type: 'text',
-            text: `Image generated successfully!\n\nSettings: ${imageSize}, ${aspectRatio}${useGoogleSearch ? ', with Google Search grounding' : ''}\nSaved to: ${result.filePath}\nOutput directory: ${getOutputDir()}${result.description ? `\n\nGemini's description: ${result.description}` : ''}`,
+            text: `Image generated successfully!\n\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${thinkingLevel}${useGoogleSearch ? ', with Google Search grounding' : ''}\nSaved to: ${result.filePath}\nOutput directory: ${getOutputDir()}${result.description ? `\n\nGemini's description: ${result.description}` : ''}`,
           },
         ]
 

@@ -270,6 +270,9 @@ export interface ImageGenerationOptions {
   style?: string
   saveToFile?: boolean
   useGoogleSearch?: boolean // Ground generation in real-world info
+  thinkingLevel?: ThinkingLevel // Reasoning depth for image generation
+  personGeneration?: 'ALLOW_ALL' | 'ALLOW_ADULT' | 'ALLOW_NONE' // Control generation of people
+  seed?: number // Seed for reproducible results
 }
 
 /**
@@ -292,6 +295,9 @@ export async function generateImage(
       style,
       saveToFile = true,
       useGoogleSearch = false,
+      thinkingLevel,
+      personGeneration,
+      seed,
     } = options
 
     // Build the full prompt with style if provided
@@ -311,6 +317,21 @@ export async function generateImage(
     // Add Google Search grounding if requested
     if (useGoogleSearch) {
       config.tools = [{ googleSearch: {} }]
+    }
+
+    // Add thinking config - defaults to high via env var or parameter
+    const effectiveThinkingLevel = thinkingLevel || (process.env.GEMINI_IMAGE_THINKING_LEVEL as ThinkingLevel) || 'high'
+    config.thinkingConfig = { thinkingLevel: effectiveThinkingLevel }
+    logger.debug(`Using thinking level: ${effectiveThinkingLevel}`)
+
+    // Add person generation control if specified
+    if (personGeneration) {
+      ;(config.imageConfig as Record<string, unknown>).personGeneration = personGeneration
+    }
+
+    // Add seed for reproducibility if specified
+    if (seed !== undefined) {
+      config.seed = seed
     }
 
     const response = await genAI.models.generateContent({

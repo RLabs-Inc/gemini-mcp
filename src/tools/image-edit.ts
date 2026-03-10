@@ -62,8 +62,22 @@ export function registerImageEditTool(server: McpServer): void {
         .default('2K')
         .describe('Resolution: 1K (fast), 2K (balanced), 4K (highest quality)'),
       useGoogleSearch: z.boolean().default(false).describe('Ground the image in real-world info via Google Search'),
+      thinkingLevel: z
+        .enum(['minimal', 'low', 'medium', 'high'])
+        .default('high')
+        .describe(
+          'Reasoning depth for image generation. high (default) produces best quality.'
+        ),
+      personGeneration: z
+        .enum(['ALLOW_ALL', 'ALLOW_ADULT', 'ALLOW_NONE'])
+        .optional()
+        .describe('Control generation of people in images.'),
+      seed: z
+        .number()
+        .optional()
+        .describe('Seed for reproducible results.'),
     },
-    async ({ prompt, aspectRatio, imageSize, useGoogleSearch }) => {
+    async ({ prompt, aspectRatio, imageSize, useGoogleSearch, thinkingLevel, personGeneration, seed }) => {
       logger.info(`Starting image edit session: ${prompt.substring(0, 50)}...`)
 
       try {
@@ -83,6 +97,21 @@ export function registerImageEditTool(server: McpServer): void {
             aspectRatio,
             imageSize,
           },
+        }
+
+        // Add thinking config - defaults to high via env var or parameter
+        const effectiveThinkingLevel = thinkingLevel || (process.env.GEMINI_IMAGE_THINKING_LEVEL as string) || 'high'
+        chatConfig.thinkingConfig = { thinkingLevel: effectiveThinkingLevel }
+        logger.debug(`Using thinking level: ${effectiveThinkingLevel}`)
+
+        // Add person generation control if specified
+        if (personGeneration) {
+          ;(chatConfig.imageConfig as Record<string, unknown>).personGeneration = personGeneration
+        }
+
+        // Add seed for reproducibility if specified
+        if (seed !== undefined) {
+          chatConfig.seed = seed
         }
 
         if (useGoogleSearch) {
@@ -143,7 +172,7 @@ export function registerImageEditTool(server: McpServer): void {
             },
             {
               type: 'text' as const,
-              text: `Image edit session started!\n\nSession ID: ${sessionId}\nSettings: ${imageSize}, ${aspectRatio}${useGoogleSearch ? ', with Google Search' : ''}\nSaved to: ${filePath}\n\nUse gemini-continue-image-edit with this session ID to make changes.${description ? `\n\nGemini's description: ${description}` : ''}`,
+              text: `Image edit session started!\n\nSession ID: ${sessionId}\nSettings: ${imageSize}, ${aspectRatio}, thinking: ${thinkingLevel}${useGoogleSearch ? ', with Google Search' : ''}\nSaved to: ${filePath}\n\nUse gemini-continue-image-edit with this session ID to make changes.${description ? `\n\nGemini's description: ${description}` : ''}`,
             },
           ],
         }
