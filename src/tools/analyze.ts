@@ -42,7 +42,7 @@ export function registerAnalyzeTool(server: McpServer): void {
         .describe('What aspect to focus the analysis on'),
     },
     async ({ code, filePath, filePaths, language, focus }) => {
-      console.log(`Analyzing code with focus on ${focus}`)
+      console.error(`Analyzing code with focus on ${focus}`)
 
       try {
         // Normalize file paths
@@ -92,7 +92,7 @@ export function registerAnalyzeTool(server: McpServer): void {
         .describe('Type of analysis to perform'),
     },
     async ({ text, type }) => {
-      console.log(`Analyzing text with focus on ${type}`)
+      console.error(`Analyzing text with focus on ${type}`)
 
       try {
         const prompt = `

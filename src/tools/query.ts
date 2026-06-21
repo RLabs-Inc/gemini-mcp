@@ -28,7 +28,7 @@ export function registerQueryTool(server: McpServer): void {
         ),
     },
     async ({ prompt, model, thinkingLevel }) => {
-      console.log(
+      console.error(
         `Querying Gemini ${model} model (thinking: ${thinkingLevel || 'default'}) with prompt: ${prompt.substring(0, 100)}...`
       )
 

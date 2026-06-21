@@ -64,36 +64,36 @@ export const logger: Logger = {
   info: (message: string, ...args: unknown[]) => {
     // Info messages are logged in normal and verbose modes
     if (shouldLogInfo()) {
-      console.info(`INFO: ${message}`, ...args)
+      console.error(`INFO: ${message}`, ...args)
     }
   },
 
   debug: (message: string, ...args: unknown[]) => {
     // Debug messages are only logged in verbose mode
     if (shouldLogDebug()) {
-      console.debug(`DEBUG: ${message}`, ...args)
+      console.error(`DEBUG: ${message}`, ...args)
     }
   },
 
   prompt: (prompt: string) => {
     // Prompts are only fully logged in verbose mode
     if (shouldLogFullMessages()) {
-      console.info(`\n===== PROMPT =====\n${prompt}\n==================\n`)
+      console.error(`\n===== PROMPT =====\n${prompt}\n==================\n`)
     } else if (shouldLogInfo()) {
       // In normal mode, just log a summary
       const summary = prompt.length > 100 ? `${prompt.substring(0, 100)}...` : prompt
-      console.info(`PROMPT: ${summary}`)
+      console.error(`PROMPT: ${summary}`)
     }
   },
 
   response: (response: string) => {
     // Responses are only fully logged in verbose mode
     if (shouldLogFullMessages()) {
-      console.info(`\n===== RESPONSE =====\n${response}\n====================\n`)
+      console.error(`\n===== RESPONSE =====\n${response}\n====================\n`)
     } else if (shouldLogInfo()) {
       // In normal mode, just log a summary
       const summary = response.length > 100 ? `${response.substring(0, 100)}...` : response
-      console.info(`RESPONSE: ${summary}`)
+      console.error(`RESPONSE: ${summary}`)
     }
   },
 }
