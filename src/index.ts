@@ -12,6 +12,7 @@
 
 import { runCli } from './cli/index.js'
 import { startMcpServer } from './server.js'
+import { logger } from './utils/logger.js'
 
 // --- Global HTTP proxy injection for Node.js native fetch ---
 // Node.js's built-in fetch (powered by undici) does NOT automatically read
@@ -32,9 +33,9 @@ import { createRequire } from 'node:module'
     // Node 18+ uses undici internally; the symbol is the same regardless of whether
     // undici is bundled by Node or installed as a standalone package.
     ;(globalThis as Record<symbol, unknown>)[Symbol.for('undici.globalDispatcher.1')] = dispatcher
-    console.error(`[Proxy] Detected HTTP_PROXY, global proxy agent injected.`)
+    logger.info(`[Proxy] Detected HTTP_PROXY, global proxy agent injected.`)
   } catch (err: unknown) {
-    console.error(
+    logger.error(
       `[Proxy] Failed to inject proxy agent: ${err instanceof Error ? err.message : String(err)}`
     )
   }
