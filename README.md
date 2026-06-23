@@ -432,7 +432,6 @@ bun install -g @rlabs-inc/gemini-mcp
 }
 
 If you must use a proxy to establish a connection to gemini , you can use below json
-```json
 {
   "gemini": {
     "command": "npx",
@@ -440,8 +439,8 @@ If you must use a proxy to establish a connection to gemini , you can use below 
     "env": {
       "GEMINI_API_KEY": "your-api-key",
       "GEMINI_OUTPUT_DIR": "/path/to/save/files",
-	"HTTP_PROXY": "http://127.0.0.1:xxxx", // xxxx is your proxy port
-        "HTTPS_PROXY": "http://127.0.0.1:xxxx"
+	"HTTP_PROXY": "http://127.0.0.1:your proxy port", 
+        "HTTPS_PROXY": "http://127.0.0.1:your proxy port"
     }
   }
 }
