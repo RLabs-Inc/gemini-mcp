@@ -13,6 +13,33 @@
 import { runCli } from './cli/index.js'
 import { startMcpServer } from './server.js'
 
+// --- Global HTTP proxy injection for Node.js native fetch ---
+// Node.js's built-in fetch (powered by undici) does NOT automatically read
+// HTTP_PROXY / HTTPS_PROXY. We manually inject a ProxyAgent as the global
+// undici dispatcher so all downstream network calls (including @google/genai)
+// go through the proxy, which is essential for developers behind firewalls.
+import { createRequire } from 'node:module'
+
+;(function setupGlobalProxy(): void {
+  const proxyUrl = process.env.HTTP_PROXY || process.env.HTTPS_PROXY
+  if (!proxyUrl) return
+
+  try {
+    const req = createRequire(import.meta.url)
+    const { ProxyAgent } = req('undici') as { ProxyAgent: new (uri: string) => unknown }
+    const dispatcher = new ProxyAgent(proxyUrl)
+    // This symbol is the stable hook undici exposes to replace its global dispatcher.
+    // Node 18+ uses undici internally; the symbol is the same regardless of whether
+    // undici is bundled by Node or installed as a standalone package.
+    ;(globalThis as Record<symbol, unknown>)[Symbol.for('undici.globalDispatcher.1')] = dispatcher
+    console.error(`[Proxy] Detected HTTP_PROXY, global proxy agent injected.`)
+  } catch (err: unknown) {
+    console.error(
+      `[Proxy] Failed to inject proxy agent: ${err instanceof Error ? err.message : String(err)}`
+    )
+  }
+})()
+
 // Get command line arguments
 const args = process.argv.slice(2)
 

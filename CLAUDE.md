@@ -6,7 +6,7 @@ This document provides essential information for Claude when working with this G
 
 This project is an MCP (Model Context Protocol) server that connects Claude to Google's Gemini 3 AI models. It enables bidirectional collaboration between Claude and Gemini, allowing them to work together by sharing capabilities and agent tools.
 
-**Version:** 0.8.0
+**Version:** 0.8.1
 **Package:** @rlabs-inc/gemini-mcp
 **MCP Registry:** io.github.rlabs-inc/gemini-mcp
 
@@ -119,6 +119,8 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
 | `QUIET` | No | `false` | Minimize logging |
 | `GEMINI_ENABLED_TOOLS` | No | - | Comma-separated list of tool groups to load |
 | `GEMINI_TOOL_PRESET` | No | - | Preset profile: minimal, text, image, research, media, full |
+| `HTTP_PROXY` | No | - | HTTP proxy URL (e.g. `http://127.0.0.1:7890`) for routing traffic through a proxy |
+| `HTTPS_PROXY` | No | - | HTTPS proxy URL; used as fallback when `HTTP_PROXY` is not set |
 
 ## Command Line Options
 
@@ -129,7 +131,14 @@ This project is an MCP (Model Context Protocol) server that connects Claude to G
 ## Installation
 
 ```bash
+# Basic install
 claude mcp add gemini -s user -- env GEMINI_API_KEY=YOUR_KEY npx -y @rlabs-inc/gemini-mcp
+
+# With HTTP proxy (for developers behind firewalls)
+claude mcp add gemini -s user -- \
+  env GEMINI_API_KEY=YOUR_KEY \
+  HTTP_PROXY=http://127.0.0.1:7890 \
+  npx -y @rlabs-inc/gemini-mcp
 ```
 
 ## Development Commands
@@ -148,6 +157,7 @@ bun run lint       # Lint code with ESLint
 
 - `@google/genai`: ^1.34.0 - Google Generative AI SDK
 - `@modelcontextprotocol/sdk`: 1.22.0 - MCP SDK (pinned; 1.23.0+ causes TypeScript OOM)
+- `undici`: ^7.0.0 - HTTP client used to inject global proxy support for Node.js fetch()
 - `zod`: 3.24.3 - Schema validation (pinned for compatibility with MCP SDK)
 - `zod-to-json-schema`: 3.24.5 - Zod to JSON Schema conversion (pinned; 3.25+ requires zod/v3 export)
 
@@ -159,6 +169,7 @@ bun run lint       # Lint code with ESLint
 - Generated files are saved to `GEMINI_OUTPUT_DIR`
 - Thinking levels control reasoning depth in Gemini 3
 - Image editing uses chat sessions with automatic thought signature handling
+- **HTTP Proxy**: `src/index.ts` injects a global `undici` ProxyAgent before any network calls when `HTTP_PROXY` / `HTTPS_PROXY` is set. This is needed because Node.js's built-in `fetch()` does not natively respect these env vars (unlike Bun, which does).
 
 ## Gemini 3 Specific Features
 
@@ -184,6 +195,11 @@ bun run lint       # Lint code with ESLint
 - **Image Analysis Tool**: New `gemini-analyze-image` with object detection and bounding boxes (community contribution by @acreeger)
 - **Thinking Level Support**: Added thinkingLevel parameter to image analysis for complex visual reasoning
 - **Dual Coordinate Output**: Returns both normalized (box_2d) and pixel (bbox_pixels) coordinates
+
+## Key Changes (unreleased)
+
+- **HTTP Proxy Support**: `src/index.ts` now natively reads `HTTP_PROXY` / `HTTPS_PROXY` env vars and injects a global `undici` ProxyAgent before any network request. No external wrapper script needed.
+- **New dependency**: `undici` added for proxy agent injection.
 
 ### Previous Versions
 - v0.7.x: Published to MCP Registry, CLI renamed to gcli
