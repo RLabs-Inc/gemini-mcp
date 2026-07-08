@@ -20,7 +20,7 @@ export function registerSummarizeTool(server: McpServer): void {
       format: z.enum(['paragraph', 'bullet-points', 'outline']).default('paragraph').describe('The output format'),
     },
     async ({ content, length, format }) => {
-      console.log(`Summarizing content (${length}, ${format})`)
+      console.error(`Summarizing content (${length}, ${format})`)
 
       try {
         // Configure length parameters

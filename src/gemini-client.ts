@@ -587,15 +587,19 @@ export interface DeepResearchResult {
   savedPath?: string // Path to full response JSON file
 }
 
-// Deep Research agent model
-const DEEP_RESEARCH_AGENT = 'deep-research-pro-preview-12-2025'
+// Deep Research agent model. The 12-2025 preview agent is deprecated; the current
+// agents are deep-research-preview-04-2026 (speed) and deep-research-max-preview-04-2026
+// (comprehensiveness). Overridable via env so a future agent rev needs no code change.
+const DEEP_RESEARCH_AGENT =
+  process.env.GEMINI_DEEP_RESEARCH_AGENT || 'deep-research-preview-04-2026'
 
 /**
  * Start a deep research task
  */
 export async function startDeepResearch(prompt: string): Promise<DeepResearchResult> {
   try {
-    // The Interactions API is properly typed in @google/genai v1.34.0+
+    // The Interactions API "steps" schema requires @google/genai >= 2.0.0 (the legacy
+    // "outputs" schema was removed by Google on 2026-06-08).
     const interaction = await genAI.interactions.create({
       input: prompt,
       agent: DEEP_RESEARCH_AGENT,
@@ -634,22 +638,29 @@ export async function checkDeepResearch(researchId: string): Promise<DeepResearc
         status: interaction.status,
         created: interaction.created,
         agent: interaction.agent,
-        model: interaction.model,
-        outputs: interaction.outputs,
+        steps: interaction.steps,
         rawInteraction: interaction,
       }
       fs.writeFileSync(outputPath, JSON.stringify(fullResponse, null, 2))
       logger.info(`Full deep research response saved to: ${outputPath}`)
 
-      // Extract text for the summary (but full data is saved)
-      const textOutputs = (interaction.outputs || [])
-        .filter((output) => 'type' in output && output.type === 'text')
-        .map((output) => ({ text: (output as { text?: string }).text }))
+      // Extract the final report text. The June-2026 Interactions API ("steps" schema,
+      // @google/genai >= 2.0.0) exposes the convenience accessor output_text; fall back
+      // to any text emitted across the steps array.
+      const reportText =
+        interaction.output_text ||
+        (interaction.steps || [])
+          .map((step) => {
+            const s = step as { text?: string; content?: { text?: string } }
+            return s.text || s.content?.text
+          })
+          .filter((text): text is string => !!text)
+          .join('\n\n')
 
       return {
         id: researchId,
         status: 'completed',
-        outputs: textOutputs,
+        outputs: reportText ? [{ text: reportText }] : [],
         savedPath: outputPath,
       }
     } else if (status === 'failed' || status === 'cancelled') {
@@ -681,15 +692,20 @@ export async function followUpResearch(researchId: string, question: string): Pr
       previous_interaction_id: researchId,
     })
 
-    // Extract text from TextContent outputs
-    const outputs = interaction.outputs || []
-    const textOutputs = outputs
-      .filter((output) => 'type' in output && output.type === 'text')
-      .map((output) => (output as { text?: string }).text)
-      .filter((text): text is string => !!text)
+    // The new Interactions API exposes the convenience accessor output_text.
+    if (interaction.output_text) {
+      return interaction.output_text
+    }
 
-    if (textOutputs.length > 0) {
-      return textOutputs[textOutputs.length - 1]
+    // Fallback: pull any text emitted across the steps array.
+    const stepTexts = (interaction.steps || [])
+      .map((step) => {
+        const s = step as { text?: string; content?: { text?: string } }
+        return s.text || s.content?.text
+      })
+      .filter((text): text is string => !!text)
+    if (stepTexts.length > 0) {
+      return stepTexts[stepTexts.length - 1]
     }
 
     return 'No text response received'
